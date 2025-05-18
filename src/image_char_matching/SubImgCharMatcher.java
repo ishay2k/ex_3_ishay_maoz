@@ -42,6 +42,11 @@ public class SubImgCharMatcher {
     }
 
 
+    /**
+     * This method receives a certain brightness and returns the character with the closest brightness
+     * @param brightness The parameter which will be used to measure which character is closest
+     * @return           The character with the closest brightness to the input 
+     */
     public char getCharByImageBrightness(double brightness){
         double diff = Math.abs(charBrightnessMap.firstEntry().getValue()
                 - brightness);
