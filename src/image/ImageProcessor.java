@@ -144,21 +144,30 @@ public class ImageProcessor {
 
 
 
-    public void returnSubImages(Image image, int resolutionsPerRow){
-        int totalSubImages = (image.getWidth() / resolutionsPerRow) *
-                (image.getHeight()) / resolutionsPerRow;
+    public SubImage[][] returnSubImages(Image image, int resolutionsPerRow){
+        int subImagesToSide = image.getWidth() / resolutionsPerRow;
+        int subImagesToTop = image.getHeight() / resolutionsPerRow;
 
-    }
+        SubImage[][] resolutionImage = new SubImage[subImagesToSide][subImagesToTop];
 
-    public Color[][] fillSubImage(int startRow, int startCol, int size, Image image){
-        Color[][] subImage = new Color[size][size];
-        for(int i = startRow; i < startRow + size; i++){
-            for(int j = startCol; j < startCol + size; j++){
-
+        for(int row = 0; row < image.getWidth(); row += subImagesToSide){
+            for(int column = 0; column < image.getHeight(); column += subImagesToTop){
+                SubImage curr = fillSubImage(row, column, subImagesToSide, image);
+                resolutionImage[row / subImagesToSide][column / subImagesToTop] = curr;
             }
         }
+        return resolutionImage;
     }
 
+    public SubImage fillSubImage(int startRow, int startCol, int size, Image image){
+        Color[][] subImage = new Color[size][size];
+        for(int i = 0; i < size; i++){
+            for(int j = 0; j < size; j++){
+                subImage[i][j] = image.getPixel(i + startRow, j + startCol);
+            }
+        }
+        return new SubImage(subImage);
+    }
 }
 
 
