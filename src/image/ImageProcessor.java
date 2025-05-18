@@ -1,6 +1,5 @@
 package image;
 
-import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 
 /**
@@ -13,6 +12,8 @@ import java.awt.*;
  * needed in the ASCII art conversion pipeline.
  *
  */
+
+// check if to it utility class(then static functions) - this is leads chnages in asciiart class
 public class ImageProcessor {
 
     /**
@@ -24,7 +25,7 @@ public class ImageProcessor {
      * @return a new Image instance with padded dimensions,
      *         or the original image if no padding was needed
      */
-    public static Image padToPowerOfTwo(Image image){
+    public Image padToPowerOfTwo(Image image){
         int oldWidth = image.getWidth();
         int oldHeight = image.getHeight();
         int newWidth, newHeight;
@@ -142,23 +143,42 @@ public class ImageProcessor {
     }
 
 
-
-
+    /**
+     * Will turn the original image into a 2d array of sub-images
+     * @param image              the original image that we will be dividing
+     * @param resolutionsPerRow  the number of sub-images per row
+     * @return                   a 2d array of all the sub-images
+     * @author                   Ishay Shaul
+     * @author                   Maoz Bar Shimon
+     */
     public SubImage[][] returnSubImages(Image image, int resolutionsPerRow){
-        int subImagesToSide = image.getWidth() / resolutionsPerRow;
-        int subImagesToTop = image.getHeight() / resolutionsPerRow;
+        int sizeOfMatrix = image.getWidth() / resolutionsPerRow;
+        int subImagesToTop = image.getHeight() / sizeOfMatrix;
 
-        SubImage[][] resolutionImage = new SubImage[subImagesToSide][subImagesToTop];
+        SubImage[][] resolutionImage = new SubImage[subImagesToTop][resolutionsPerRow];
 
-        for(int row = 0; row < image.getWidth(); row += subImagesToSide){
-            for(int column = 0; column < image.getHeight(); column += subImagesToTop){
-                SubImage curr = fillSubImage(row, column, subImagesToSide, image);
-                resolutionImage[row / subImagesToSide][column / subImagesToTop] = curr;
+        for(int row = 0; row < subImagesToTop; row++){
+            for(int column = 0; column < resolutionsPerRow; column++){
+                int startX = row * sizeOfMatrix;
+                int startY = column * sizeOfMatrix; // change X and Y
+                SubImage curr = fillSubImage(startX, startY, sizeOfMatrix, image);
+                resolutionImage[row][column] = curr;
             }
         }
         return resolutionImage;
     }
 
+    /**
+     * Creates a sub-image of the original image. The method will receive a row and a column which will
+     * represent the top left corner of the sub-image, and will create a square sub-image using size
+     * @param startRow  the row on the original image
+     * @param startCol  the pixel on the original image
+     * @param size      the size of the square that will represent the sub-image
+     * @param image     the original image
+     * @return          a sub-image
+     * @author          Ishay Shaul
+     * @author          Maoz Bar Shimon
+     */
     public SubImage fillSubImage(int startRow, int startCol, int size, Image image){
         Color[][] subImage = new Color[size][size];
         for(int i = 0; i < size; i++){
