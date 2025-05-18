@@ -10,8 +10,8 @@ public class SubImgCharMatcher {
     private static final int PIXEL_SIZE = 16;
 
 
-    private final HashSet<Character> charSet;
-    private final TreeMap<Character, Double> charBrightnessMap;
+    private HashSet<Character> charSet;
+    private TreeMap<Character, Double> charBrightnessMap;
     private double maxBrightness;
     private double minBrightness;
 
@@ -20,36 +20,35 @@ public class SubImgCharMatcher {
         this.charSet = new HashSet<Character>();
         this.charBrightnessMap = new TreeMap<>();
         for(char c : charset){
-            charSet.add(c);
+            addChar(c);
         }
+        setMaximumAndMinimumBrightness();
+        normalizeBrightness();
     }
 
     public void removeChar(char c){
-        charSet.remove(c);
+
         charBrightnessMap.remove(c);
         setMaximumAndMinimumBrightness();
         normalizeBrightness();
-        // need to update tree brightness
     }
 
     public void addChar(char c){
-        charSet.add(c);
+        this.charSet.add(c);
         double cBrightness = calculateBrightness(c);
         charBrightnessMap.put(c, cBrightness);
-        setMaximumAndMinimumBrightness();
-        normalizeBrightness();
-        // need to update tree brightness
+//        setMaximumAndMinimumBrightness();
+//        normalizeBrightness();
     }
 
 
     /**
      * This method receives a certain brightness and returns the character with the closest brightness
      * @param brightness The parameter which will be used to measure which character is closest
-     * @return           The character with the closest brightness to the input 
+     * @return           The character with the closest brightness to the input
      */
     public char getCharByImageBrightness(double brightness){
-        double diff = Math.abs(charBrightnessMap.firstEntry().getValue()
-                - brightness);
+        double diff = Math.abs(brightness - charBrightnessMap.firstEntry().getValue());
         char curr = charBrightnessMap.firstKey();
         for(Map.Entry<Character, Double> entry : charBrightnessMap.entrySet()){
             if(diff > Math.abs(entry.getValue() - brightness)){
