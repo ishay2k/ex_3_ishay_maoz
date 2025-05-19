@@ -12,5 +12,5 @@ public interface UserCommand {
      *
      * @param shell the Shell instance containing the current state and logic
      */
-    void execute(Shell shell);
+    void execute();
 }

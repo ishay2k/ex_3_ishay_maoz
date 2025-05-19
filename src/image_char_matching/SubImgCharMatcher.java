@@ -111,6 +111,10 @@ public class SubImgCharMatcher {
             entry.setValue(normalized);
         }
     }
+
+    public TreeMap<Character, Double> getCharBrightnessMap(){
+        return charBrightnessMap;
+    }
 }
 
 

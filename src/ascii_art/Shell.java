@@ -45,7 +45,7 @@ public class Shell {
 
             String command = tokens[0];
 
-            if (command.equals("exit")) {
+            if (command.equals("exit")){
                 break;
             }
         }
