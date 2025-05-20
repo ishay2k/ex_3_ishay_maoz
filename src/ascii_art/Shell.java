@@ -16,6 +16,11 @@ public class Shell {
     private static final String SELECT_OUTPUT = "output";
     private static final String ROUND = "round";
     private static final String RUN_ALGO = "asciiArt";
+    private static final String ALL = "all";
+    private static final int LOW_INDEX = 32;
+    private static final int HIGH_INDEX = 126;
+    private static final String SPACE_ARG = "space";
+    private static final String SPACE = " ";
 
     private final String imagePath;
     private Image image;
@@ -51,14 +56,15 @@ public class Shell {
                 subCommand = tokens[1];
             }
 
-            if (command.equals("exit")){
+            if (command.equals(EXIT)){
                 break;
             }
-            if(command.equals("res")){
+            if(command.equals(CHANGE_RES)){
                 if(!setResolution(subCommand)){
                     return;
                 }
             }
+            if(command.equals(ADD))
         }
     }
 
@@ -95,6 +101,52 @@ public class Shell {
             return false;
         }
         return true;
+    }
+
+    private void addChars(String[] commands){
+        if(commands[0].length() == 1){
+            char c = commands[0].charAt(0);
+            charMatcher.addChar(c);
+            return;
+        }
+        // all
+        if(commands[0].equals(ALL)){
+            for(int i = LOW_INDEX; i <= HIGH_INDEX; i++){
+                char c = (char) i;
+                charMatcher.addChar(c);
+            }
+            return;
+        }
+        // range
+        if(commands[0].length() == 3){
+            String[] parts= commands[0].split("-");
+            if(parts.length == 2){
+                int first = (int) parts[0].charAt(0);
+                int second = (int) parts[1].charAt(0);
+                setAdds(first, second);
+            }
+            return;
+        }
+        // space
+        if(commands[0].equals(SPACE_ARG)){
+            char c = SPACE.charAt(0);
+            charMatcher.addChar(c);
+        }
+    }
+
+    private void setAdds(int n, int m){
+        if(n <= m){
+            for(int i = n; i <= m; i++){
+                char c = (char) i;
+                charMatcher.addChar(c);
+            }
+        }
+        else{
+            for(int i = m; i <= n; i++){
+                char c = (char) i;
+                charMatcher.addChar(c);
+            }
+        }
     }
 
     public static void main (String[] args) throws IOException {
