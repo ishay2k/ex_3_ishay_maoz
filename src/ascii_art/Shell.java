@@ -5,6 +5,8 @@ import image.ImageProcessor;
 import image_char_matching.SubImgCharMatcher;
 import java.io.IOException;
 
+import static java.lang.Math.max;
+
 public class Shell {
     private static final String EXIT = "exit";
     private static final String VIEW = "chars";
@@ -36,19 +38,63 @@ public class Shell {
 
     public void run(String imageName) {
         char[][] result = asciiArtAlgorithm.run();
-
+        String subCommand;
         while (true) {
             System.out.print(">>> ");
             String input = KeyboardInput.readLine();
             String[] tokens = input.trim().split("\\s+"); // seperate to words
             if (tokens.length == 0) continue;
-
             String command = tokens[0];
+            if (tokens.length == 1) {
+                subCommand = "";
+            } else {
+                subCommand = tokens[1];
+            }
 
             if (command.equals("exit")){
                 break;
             }
+            if(command.equals("res")){
+                if(!setResolution(subCommand)){
+                    return;
+                }
+            }
         }
+    }
+
+    private boolean setResolution(String subCommand) {
+        int newRes;
+        switch (subCommand) {
+            case "":
+                break;
+            case "up":
+                newRes = resolution * 2;
+                if(!checkBoundries(newRes)) return false;
+                resolution *= 2;
+                break;
+            case "down":
+                newRes = resolution / 2;
+                if(!checkBoundries(newRes)) return false;
+                resolution /= 2;
+                break;
+            default:
+                System.out.println("Did not change resolution due to incorrect format.\n");
+                return false;
+        }
+        System.out.println("Resolution set to %s.\n" + resolution);
+        return true;
+    }
+
+
+    private boolean checkBoundries(int newRes) {
+        int imgHeight = image.getHeight();
+        int imgWidth = image.getWidth();
+        int minCharsInRow = max(1, imgWidth / imgHeight);
+        if (newRes > imgWidth || minCharsInRow > newRes) {
+            System.out.println("Did not change resolution due to exceeding boundaries.");
+            return false;
+        }
+        return true;
     }
 
     public static void main (String[] args) throws IOException {
@@ -61,6 +107,7 @@ public class Shell {
         shell.run(shell.imagePath);
 
     }
+
 //        try {
 //            // טען את התמונה (מהקובץ)
 //            Image image = new Image("C:\\Users\\ishay\\JAVA\\ex3\\src\\examples\\board.jpeg");
