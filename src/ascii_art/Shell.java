@@ -4,6 +4,7 @@ import image.Image;
 import image.ImageProcessor;
 import image_char_matching.SubImgCharMatcher;
 import java.io.IOException;
+import java.util.TreeMap;
 
 import static java.lang.Math.max;
 
@@ -21,6 +22,9 @@ public class Shell {
     private static final int HIGH_INDEX = 126;
     private static final String SPACE_ARG = "space";
     private static final String SPACE = " ";
+    private static final String REMOVE_INCORRECT = "Did not remove due to incorrect format.";
+    private static final String ADD_INCORRECT = "Did not add due to incorrect format.";
+    private static final String RANGE_SPLITTER = "-";
 
     private final String imagePath;
     private Image image;
@@ -61,10 +65,21 @@ public class Shell {
             }
             if(command.equals(CHANGE_RES)){
                 if(!setResolution(subCommand)){
-                    return;
+                    continue;
                 }
             }
-            if(command.equals(ADD))
+            if(command.equals(ADD)){
+                addChars(tokens);
+                continue;
+            }
+            if(command.equals(REMOVE)){
+                removeChars(tokens);
+                continue;
+            }
+            if(command.equals(VIEW)){
+                display();
+                continue;
+            }
         }
     }
 
@@ -103,9 +118,15 @@ public class Shell {
         return true;
     }
 
+    /**
+     * Method that is employed when the command "add" was given
+     * @param commands An array of strings that make up the original user command
+     * @author Ishay Shaul
+     * @author Maoz Bar Shimon
+     */
     private void addChars(String[] commands){
-        if(commands[0].length() == 1){
-            char c = commands[0].charAt(0);
+        if(commands[1].length() == 1){
+            char c = commands[1].charAt(0);
             charMatcher.addChar(c);
             return;
         }
@@ -118,22 +139,35 @@ public class Shell {
             return;
         }
         // range
-        if(commands[0].length() == 3){
-            String[] parts= commands[0].split("-");
+        if(commands[1].length() == 3){
+            String[] parts= commands[1].split(RANGE_SPLITTER);
             if(parts.length == 2){
                 int first = (int) parts[0].charAt(0);
                 int second = (int) parts[1].charAt(0);
                 setAdds(first, second);
             }
-            return;
+            else{
+                System.out.println(ADD_INCORRECT);
+            }
         }
         // space
         if(commands[0].equals(SPACE_ARG)){
             char c = SPACE.charAt(0);
             charMatcher.addChar(c);
         }
+        // else
+        else{
+            System.out.println(ADD_INCORRECT);
+        }
     }
 
+    /**
+     * adds all chars in the range of n to m (or vice versa) to the char array
+     * @param n The first char(int will be cast to char)
+     * @param m The second char. n can be greater than m
+     * @author Ishay Shaul
+     * @author Maoz Bar Shimon
+     */
     private void setAdds(int n, int m){
         if(n <= m){
             for(int i = n; i <= m; i++){
@@ -147,6 +181,87 @@ public class Shell {
                 charMatcher.addChar(c);
             }
         }
+    }
+
+    /**
+     * method that takes care of the "remove" command from the user
+     * @param commands Array of string which make up the command given by the user.
+     * @author Ishay Shaul
+     * @author Maoz Bar Shimon
+     */
+    public void removeChars(String[] commands){
+        if(commands[1].length() == 1){
+            char c = commands[1].charAt(0);
+            charMatcher.removeChar(c);
+            return;
+        }
+        // all
+        if(commands[0].equals(ALL)){
+            for(int i = LOW_INDEX; i <= HIGH_INDEX; i++){
+                char c = (char) i;
+                charMatcher.removeChar(c);
+            }
+            return;
+        }
+        // range
+        if(commands[1].length() == 3){
+            String[] parts= commands[1].split(RANGE_SPLITTER);
+            if(parts.length == 2){
+                int first = (int) parts[0].charAt(0);
+                int second = (int) parts[1].charAt(0);
+                setRemove(first, second);
+            }
+            else{
+                System.out.println(REMOVE_INCORRECT);
+            }
+        }
+        // space
+        if(commands[0].equals(SPACE_ARG)){
+            char c = SPACE.charAt(0);
+            charMatcher.removeChar(c);
+        }
+        // else
+        else{
+            System.out.println(REMOVE_INCORRECT);
+        }
+    }
+
+    /**
+     * Given two ints, this method will remove all chars in between frm the char array
+     * @param n The first int that is given. Can be higher than m.
+     * @param m The second int that is given
+     * @author Ishay Shaul
+     * @author Maoz Bar Shimon
+     */
+    public void setRemove(int n, int m){
+        if(n <= m){
+            for(int i = n; i <= m; i++){
+                char c = (char) i;
+                charMatcher.removeChar(c);
+            }
+        }
+        else{
+            for(int i = m; i <= n; i++){
+                char c = (char) i;
+                charMatcher.removeChar(c);
+            }
+        }
+    }
+
+    /**
+     * Will display all the chars that are currently in use
+     * @author Ishay Shaul
+     * @author Maoz Bar Shimon
+     */
+    public void display(){
+        TreeMap<Character, Double> charTreeMap = charMatcher.getCharBrightnessMap();
+        if(charTreeMap.isEmpty()){
+            return;
+        }
+        for(Character c: charTreeMap.keySet()){
+            System.out.println(c + SPACE);
+        }
+        System.out.println();
     }
 
     public static void main (String[] args) throws IOException {
