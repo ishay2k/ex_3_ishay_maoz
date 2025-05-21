@@ -8,6 +8,8 @@ import image.ImageProcessor;
 import image_char_matching.SubImgCharMatcher;
 import java.io.IOException;
 import java.util.TreeMap;
+import ascii_art.RoundingMode;
+
 
 import static java.lang.Math.max;
 
@@ -318,6 +320,10 @@ public class Shell {
             System.out.println(OUTPUT_ERROR);
         }
     }
+
+    private void roundCommand()
+
+
 
     public static void main (String[] args) throws IOException {
         if (args.length != 1) {
