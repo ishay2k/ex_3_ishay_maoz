@@ -45,6 +45,8 @@ public class Shell {
     private int resolution;
     private SubImgCharMatcher charMatcher;
     private AsciiOutput currentOutput;
+    private RoundingMode roundingMode = RoundingMode.ABS;
+
 
     public Shell(String imagePath) throws IOException {
         this.imagePath = imagePath;
@@ -53,12 +55,11 @@ public class Shell {
         this.charMatcher = new SubImgCharMatcher(charArray);
         this.resolution = 2;
         this.asciiArtAlgorithm = new AsciiArtAlgorithm(image, resolution,
-                imageProcessor, charMatcher);
+                imageProcessor, charMatcher, roundingMode);
         currentOutput = new ConsoleAsciiOutput();
     }
 
     public void run(String imageName) {
-        char[][] result = asciiArtAlgorithm.run();
         String subCommand;
         while (true) {
             System.out.print(">>> ");
@@ -96,7 +97,12 @@ public class Shell {
                 displayForUser(tokens);
                 continue;
             }
+            if(command.equals(ROUND)){
+                roundCommand(subCommand);
+                continue;
+            }
         }
+        char[][] result = asciiArtAlgorithm.run();
     }
 
     private boolean setResolution(String subCommand) {
@@ -321,7 +327,21 @@ public class Shell {
         }
     }
 
-    private void roundCommand()
+    private void roundCommand(String subCommand){
+        switch (subCommand){
+            case "up":
+                roundingMode = RoundingMode.UP;
+                break;
+            case "down":
+                roundingMode = RoundingMode.DOWN;
+                break;
+            case "abs":
+                roundingMode = RoundingMode.ABS;
+                break;
+            default:
+                System.out.println("Did not change rounding method due to incorrect format.");
+        }
+    }
 
 
 

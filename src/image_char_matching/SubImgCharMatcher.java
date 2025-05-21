@@ -1,16 +1,17 @@
 package image_char_matching;
 
+import ascii_art.RoundingMode;
+
 import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.Map;
-import java.util.TreeSet;
 
 
 public class SubImgCharMatcher {
     private static final int PIXEL_SIZE = 16;
 
 
-    private HashSet<Character> charSet;
+    private final HashSet<Character> charSet;
     private TreeMap<Character, Double> charBrightnessMap;
     private double maxBrightness;
     private double minBrightness;
@@ -48,16 +49,60 @@ public class SubImgCharMatcher {
      * @param brightness The parameter which will be used to measure which character is closest
      * @return           The character with the closest brightness to the input
      */
-    public char getCharByImageBrightness(double brightness){
-        double diff = Math.abs(brightness - charBrightnessMap.firstEntry().getValue());
-        char curr = charBrightnessMap.firstKey();
-        for(Map.Entry<Character, Double> entry : charBrightnessMap.entrySet()){
-            if(diff > Math.abs(entry.getValue() - brightness)){
-                diff = Math.abs(entry.getValue() - brightness);
-                curr = entry.getKey();
+//    public char getCharByImageBrightness(double brightness, RoundingMode roundingMode){
+//        double diff = Math.abs(brightness - charBrightnessMap.firstEntry().getValue());
+//        char curr = charBrightnessMap.firstKey();
+//        for(Map.Entry<Character, Double> entry : charBrightnessMap.entrySet()){
+//            if(diff > Math.abs(entry.getValue() - brightness)){
+//                diff = Math.abs(entry.getValue() - brightness);
+//                curr = entry.getKey();
+//            }
+//        }
+//        return curr;
+//    }
+    public char getCharByImageBrightness(double brightness, RoundingMode roundingMode){
+        char selectedChar = 0;
+        double bestDiff = Double.MAX_VALUE;
+        boolean found = false;
+
+        for (Map.Entry<Character, Double> entry : charBrightnessMap.entrySet()) {
+            double charBrightness = entry.getValue();
+            char c = entry.getKey();
+
+            switch (roundingMode) {
+                case ABS:
+                    double absDiff = Math.abs(charBrightness - brightness);
+                    if (absDiff < bestDiff) {
+                        bestDiff = absDiff;
+                        selectedChar = c;
+                    }
+                    break;
+
+                case UP:
+                    if (charBrightness >= brightness) {
+                        if (!found || charBrightness < bestDiff) {
+                            bestDiff = charBrightness;
+                            selectedChar = c;
+                            found = true;
+                        }
+                    }
+                    break;
+
+                case DOWN:
+                    if (charBrightness <= brightness) {
+                        if (!found || charBrightness > bestDiff) {
+                            bestDiff = charBrightness;
+                            selectedChar = c;
+                            found = true;
+                        }
+                    }
+                    break;
             }
         }
-        return curr;
+        if (!found && roundingMode != RoundingMode.ABS) {
+            return getCharByImageBrightness(brightness, RoundingMode.ABS);
+        }
+        return selectedChar;
     }
 
     /**
