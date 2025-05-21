@@ -27,10 +27,11 @@ public class SubImgCharMatcher {
     }
 
     public void removeChar(char c){
-
-        charBrightnessMap.remove(c);
-        setMaximumAndMinimumBrightness();
-        normalizeBrightness();
+        if(charBrightnessMap.containsKey(c)){
+            charBrightnessMap.remove(c);
+            setMaximumAndMinimumBrightness();
+            normalizeBrightness();
+        }
     }
 
     public void addChar(char c){

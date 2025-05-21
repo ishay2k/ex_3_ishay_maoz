@@ -1,5 +1,8 @@
 package ascii_art;
 
+import ascii_output.AsciiOutput;
+import ascii_output.ConsoleAsciiOutput;
+import ascii_output.HtmlAsciiOutput;
 import image.Image;
 import image.ImageProcessor;
 import image_char_matching.SubImgCharMatcher;
@@ -25,6 +28,11 @@ public class Shell {
     private static final String REMOVE_INCORRECT = "Did not remove due to incorrect format.";
     private static final String ADD_INCORRECT = "Did not add due to incorrect format.";
     private static final String RANGE_SPLITTER = "-";
+    private static final String CONSOLE = "console";
+    private static final String HTML = "html";
+    private static final String HTML_FILENAME = "html.out";
+    private static final String HTML_FONT = "Courier New";
+    private static final String OUTPUT_ERROR = "Did not change output method due to incorrect format.";
 
     private final String imagePath;
     private Image image;
@@ -34,6 +42,7 @@ public class Shell {
     //    private char[] charArray = {'m', 'o'};
     private int resolution;
     private SubImgCharMatcher charMatcher;
+    private AsciiOutput currentOutput;
 
     public Shell(String imagePath) throws IOException {
         this.imagePath = imagePath;
@@ -41,8 +50,9 @@ public class Shell {
         this.imageProcessor = new ImageProcessor();
         this.charMatcher = new SubImgCharMatcher(charArray);
         this.resolution = 2;
-        this.asciiArtAlgorithm = new AsciiArtAlgorithm(image, resolution, imageProcessor, charMatcher);
-
+        this.asciiArtAlgorithm = new AsciiArtAlgorithm(image, resolution,
+                imageProcessor, charMatcher);
+        currentOutput = new ConsoleAsciiOutput();
     }
 
     public void run(String imageName) {
@@ -77,7 +87,11 @@ public class Shell {
                 continue;
             }
             if(command.equals(VIEW)){
-                display();
+                displayChars();
+                continue;
+            }
+            if(command.equals(SELECT_OUTPUT)){
+                displayForUser(tokens);
                 continue;
             }
         }
@@ -227,8 +241,10 @@ public class Shell {
     }
 
     /**
-     * Given two ints, this method will remove all chars in between frm the char array
-     * @param n The first int that is given. Can be higher than m.
+     * Given two ints, this method will remove all chars that are in between the
+     * two from the brightness map. n isn't necessarily smaller than m.
+     * The integers are interpreted as Unicode values.
+     * @param n The first int that is given.
      * @param m The second int that is given
      * @author Ishay Shaul
      * @author Maoz Bar Shimon
@@ -249,11 +265,16 @@ public class Shell {
     }
 
     /**
-     * Will display all the chars that are currently in use
+     * Displays all characters currently in use for ASCII rendering.
+     * <p>
+     * The characters are retrieved from the brightness map provided by the {@code charMatcher}
+     * and printed to the console, separated by spaces.
+     * If no characters are in use, nothing is printed.
+     *
      * @author Ishay Shaul
      * @author Maoz Bar Shimon
      */
-    public void display(){
+    public void displayChars(){
         TreeMap<Character, Double> charTreeMap = charMatcher.getCharBrightnessMap();
         if(charTreeMap.isEmpty()){
             return;
@@ -262,6 +283,40 @@ public class Shell {
             System.out.println(c + SPACE);
         }
         System.out.println();
+    }
+
+    /**
+     * Sets the current output mode based on the user command.
+     * <p>
+     * Supported output types are:
+     * <ul>
+     *   <li><b>console</b> - Outputs to the terminal using {@link ConsoleAsciiOutput}</li>
+     *   <li><b>html</b> - Outputs to an HTML file using {@link HtmlAsciiOutput}</li>
+     * </ul>
+     * If an unsupported output type is given, or if the command is incomplete,
+     * an error message is printed.
+     *
+     * @param commands an array of strings representing the user command;
+     *                 the second element specifies the desired output type
+     * @author Ishay Shaul
+     * @author Maoz Bar Shimon
+     */
+    public void displayForUser(String[] commands){
+        if(commands.length == 1){
+            System.out.println(OUTPUT_ERROR);
+            return;
+        }
+        if(commands[1].equals(CONSOLE)){
+            currentOutput = new ConsoleAsciiOutput();
+            return;
+        }
+        if(commands[1].equals(HTML)){
+            currentOutput = new HtmlAsciiOutput(HTML_FILENAME, HTML_FONT);
+            return;
+        }
+        else{
+            System.out.println(OUTPUT_ERROR);
+        }
     }
 
     public static void main (String[] args) throws IOException {
