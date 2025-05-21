@@ -8,7 +8,6 @@ import image.ImageProcessor;
 import image_char_matching.SubImgCharMatcher;
 import java.io.IOException;
 import java.util.TreeMap;
-import ascii_art.RoundingMode;
 
 
 import static java.lang.Math.max;
@@ -35,6 +34,10 @@ public class Shell {
     private static final String HTML_FILENAME = "html.out";
     private static final String HTML_FONT = "Courier New";
     private static final String OUTPUT_ERROR = "Did not change output method due to incorrect format.";
+    public static final String ROUND_ERR_MESSAGE = "Did not change rounding method due to incorrect format.";
+    public static final String BOUNDRIES_ERR_MESSAGE = "Did not change resolution due to exceeding boundaries.";
+    public static final String RES_ERR_FORMAT = "Did not change resolution due to incorrect format.\n";
+    public static final String RESOLUTION_SET_MESSAGE = "Resolution set to %s.\n";
 
     private final String imagePath;
     private Image image;
@@ -61,6 +64,7 @@ public class Shell {
 
     public void run(String imageName) {
         String subCommand;
+        char[][] result = asciiArtAlgorithm.run();
         while (true) {
             System.out.print(">>> ");
             String input = KeyboardInput.readLine();
@@ -102,9 +106,29 @@ public class Shell {
                 continue;
             }
         }
-        char[][] result = asciiArtAlgorithm.run();
     }
 
+    /**
+     * Attempts to change the current resolution based on the provided sub-command.
+     *
+     * Supported sub-commands:
+     * - "up"   → doubles the current resolution (×2)
+     * - "down" → halves the current resolution (/2)
+     * - ""     → does nothing (silent no-op)
+     *
+     * The method uses {@code checkBoundaries(newRes)} to validate whether the new resolution
+     * is within the allowed image boundaries. If the new resolution is invalid, an error
+     * message is printed and the method returns false.
+     *
+     * If the sub-command is invalid (not recognized), the constant {@code RES_ERR_FORMAT}
+     * is printed and the method returns false.
+     *
+     * Upon success, the resolution is updated and a message is printed using
+     * {@code RESOLUTION_SET_MESSAGE + resolution}.
+     *
+     * @param subCommand a command string indicating how to adjust the resolution
+     * @return true if the resolution was updated or left unchanged; false if an error occurred
+     */
     private boolean setResolution(String subCommand) {
         int newRes;
         switch (subCommand) {
@@ -121,20 +145,36 @@ public class Shell {
                 resolution /= 2;
                 break;
             default:
-                System.out.println("Did not change resolution due to incorrect format.\n");
+                System.out.println(RES_ERR_FORMAT);
                 return false;
         }
-        System.out.println("Resolution set to %s.\n" + resolution);
+        System.out.println(RESOLUTION_SET_MESSAGE + resolution);
         return true;
     }
 
 
+
+    /**
+     * Checks whether a proposed resolution value is within the legal display boundaries
+     * based on the image's dimensions.
+     *
+     * The boundaries are defined as:
+     * - The resolution must not exceed the image width.
+     * - The resolution must be at least the number of characters per row, calculated as:
+     *   max(1, imageWidth / imageHeight).
+     *
+     * If the proposed resolution violates these constraints, an error message is printed
+     * (via {@code BOUNDRIES_ERR_MESSAGE}) and the method returns false.
+     *
+     * @param newRes the proposed resolution (number of characters per row)
+     * @return true if the resolution is within the boundaries; false otherwise
+     */
     private boolean checkBoundries(int newRes) {
         int imgHeight = image.getHeight();
         int imgWidth = image.getWidth();
         int minCharsInRow = max(1, imgWidth / imgHeight);
         if (newRes > imgWidth || minCharsInRow > newRes) {
-            System.out.println("Did not change resolution due to exceeding boundaries.");
+            System.out.println(BOUNDRIES_ERR_MESSAGE);
             return false;
         }
         return true;
@@ -327,6 +367,19 @@ public class Shell {
         }
     }
 
+    /**
+     * Sets the rounding mode based on the provided sub-command string.
+     *
+     * Supported sub-commands (case-sensitive):
+     * - "up"   → sets roundingMode to RoundingMode.UP
+     * - "down" → sets roundingMode to RoundingMode.DOWN
+     * - "abs"  → sets roundingMode to RoundingMode.ABS
+     *
+     * If the input does not match any known sub-command, the rounding mode is left unchanged,
+     * and a message is printed to the console.
+     *
+     * @param subCommand the rounding command as a string (e.g., "up", "down", "abs")
+     */
     private void roundCommand(String subCommand){
         switch (subCommand){
             case "up":
@@ -339,7 +392,7 @@ public class Shell {
                 roundingMode = RoundingMode.ABS;
                 break;
             default:
-                System.out.println("Did not change rounding method due to incorrect format.");
+                System.out.println(ROUND_ERR_MESSAGE);
         }
     }
 
