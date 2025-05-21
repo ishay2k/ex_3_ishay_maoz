@@ -12,63 +12,158 @@ import java.util.TreeMap;
 
 import static java.lang.Math.max;
 
+/**
+ * The shell class will serve as the main. Here the program (centering around run) will
+ * employ the user's command on the image.
+ * @author Ishay Shaul
+ * @author Maoz Bar Shimon
+ */
 public class Shell {
+    /** command to end the game.*/
     private static final String EXIT = "exit";
+
+    /** command to see which characters are used for the image.*/
     private static final String VIEW = "chars";
+
+    /** command to add characters .*/
     private static final String ADD = "add";
+
+    /** command to remove characters.*/
     private static final String REMOVE = "remove";
+
+    /** command to increase or decrease the resolution.*/
     private static final String CHANGE_RES = "res";
+
+    /** command to select what type of output the program will generate.*/
     private static final String SELECT_OUTPUT = "output";
+
+    /** Command the changes how the program rounds.*/
     private static final String ROUND = "round";
+
+    /** Command that will run the asciiArtAlgorithm and produce the final image.*/
     private static final String RUN_ALGO = "asciiArt";
+
+    /** sub command of add and remove. will perform the first command on all
+     * characters.*/
     private static final String ALL = "all";
+
+    /** Index of the lowest character in the ascii table.*/
     private static final int LOW_INDEX = 32;
+
+    /** Index of the highest character in the ascii table.*/
     private static final int HIGH_INDEX = 126;
+
+    /** One of the sub commands of add and remove. will add or remove a space.*/
     private static final String SPACE_ARG = "space";
+
+    /** the empty space will be added or removed from the characters list .*/
     private static final String SPACE = " ";
+
+    /** Error that is printed when an incorrect sub command is given to remove.*/
     private static final String REMOVE_INCORRECT = "Did not remove due to incorrect format.";
+
+    /** Error that is printed when an incorrect sub command is given to add.*/
     private static final String ADD_INCORRECT = "Did not add due to incorrect format.";
+
+    /** The splitter that is used when the user wants to add/remove a range of chars .*/
     private static final String RANGE_SPLITTER = "-";
+
+    /** Sub command of output. Meaning that the final image be printed to the console.*/
     private static final String CONSOLE = "console";
+
+    /** Sub command of output. Meaning that the final image be printed to a html file.*/
     private static final String HTML = "html";
+
+    /** The html file that the final image will be sent to.*/
     private static final String HTML_FILENAME = "html.out";
+
+    /** the font of the html file.*/
     private static final String HTML_FONT = "Courier New";
+
+    /** Error that is printed when an incorrect sub command is given to output.*/
     private static final String OUTPUT_ERROR = "Did not change output method due to incorrect format.";
+
+    /** Error that is printed when an incorrect sub command is given to round.*/
     public static final String ROUND_ERR_MESSAGE = "Did not change rounding method due to incorrect format.";
+
+    /** Error that is printed when the resolution is out of bounds.*/
     public static final String BOUNDRIES_ERR_MESSAGE = "Did not change resolution due to exceeding boundaries.";
+
+    /** Error that is printed when the command for "res" is incorrect.*/
     public static final String RES_ERR_FORMAT = "Did not change resolution due to incorrect format.\n";
+
+    /** Information message that is printed for the user to know what the resolution is
+     * after the change.*/
     public static final String RESOLUTION_SET_MESSAGE = "Resolution set to %s.\n";
+
+    /** empty string that will be in use if the user did not give a sub command.*/
     private static final String EMPTY = "";
+
+    /** minimum number of characters that can be in use.*/
     private static final int MIN_CHARS = 2;
+
+    /** Error message that is sent if the user commanded asciiArt and the number of chars
+     * is no more than two.*/
     private static final String MIN_CHARS_ERROR = "Did not execute. Charset is too small.";
 
-
+    /** The path to the image we are using.*/
     private final String imagePath;
+
+    /** the object of type Image that we are portraying.*/
     private Image image;
+
+    /** The object ImageProcessor that turned the file path to the Image.*/
     private ImageProcessor imageProcessor;
+
+    /** The algorithm that will turn our brightness levels to an image.*/
     private AsciiArtAlgorithm asciiArtAlgorithm;
+
+    /** default characters in ascii value (the numbers represent 0-9).*/
     private char[] charArray = {48, 49, 50, 51, 52, 53, 54, 55, 56, 57};
     //    private char[] charArray = {'m', 'o'};
+
+    /** The current resolution of the image.*/
     private int resolution;
+
+    /** An object that lets us add and remove chars, while also calculating their
+     * brightness levels.*/
     private SubImgCharMatcher charMatcher;
+
+    /** current output of the program. Can be console or html*/
     private AsciiOutput currentOutput;
+
+    /** The rounding mode of the program.*/
     private RoundingMode roundingMode = RoundingMode.ABS;
 
 
+    /**
+     * Constructs a new Shell object responsible for taking care of the ascii art
+     * generation.
+     * @param imagePath    A path to the image that we wish to portray
+     * @throws IOException If the image cannot be read
+     */
     public Shell(String imagePath) throws IOException {
+        // check image here for exception
         this.imagePath = imagePath;
         this.image = new Image(imagePath);
         this.imageProcessor = new ImageProcessor();
         this.charMatcher = new SubImgCharMatcher(charArray);
-        this.resolution = 2;
+        this.resolution = MIN_CHARS;
         this.asciiArtAlgorithm = new AsciiArtAlgorithm(image, resolution,
                 imageProcessor, charMatcher, roundingMode);
         currentOutput = new ConsoleAsciiOutput();
     }
 
+    /**
+     * Method will continue running until the user exits. While it runs, the program
+     * will accept commands from the user and employ them
+     * @param imageName the image file path that is used
+     * @author Ishay Shaul
+     * @author Maoz Bar Shimon
+     */
     public void run(String imageName) {
         String subCommand;
-        char[][] result = asciiArtAlgorithm.run();
+//        char[][] result = asciiArtAlgorithm.run();
         while (true) {
             System.out.print(">>> ");
             String input = KeyboardInput.readLine();
@@ -412,13 +507,19 @@ public class Shell {
         }
     }
 
+    /**
+     * On command this method will run the asciiArtAlgorithm to get the board
+     * ready for the output
+     * @author Ishay Shaul
+     * @author Maoz Bar Shimon
+     */
     private void runAlgorithm(){
         TreeMap<Character, Double> charTreeMap = charMatcher.getCharBrightnessMap();
         if(charTreeMap.size() <= MIN_CHARS){
             System.out.println(MIN_CHARS_ERROR);
             return;
         }
-        System.out.println("number of chars: " + charTreeMap.size());
+//        System.out.println("number of chars: " + charTreeMap.size());
         char[][] board = asciiArtAlgorithm.run();
         currentOutput.out(board);
     }
