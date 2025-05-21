@@ -38,12 +38,16 @@ public class Shell {
     public static final String BOUNDRIES_ERR_MESSAGE = "Did not change resolution due to exceeding boundaries.";
     public static final String RES_ERR_FORMAT = "Did not change resolution due to incorrect format.\n";
     public static final String RESOLUTION_SET_MESSAGE = "Resolution set to %s.\n";
+    private static final String EMPTY = "";
+    private static final int MIN_CHARS = 2;
+    private static final String MIN_CHARS_ERROR = "Did not execute. Charset is too small.";
+
 
     private final String imagePath;
     private Image image;
     private ImageProcessor imageProcessor;
     private AsciiArtAlgorithm asciiArtAlgorithm;
-    private char[] charArray = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    private char[] charArray = {48, 49, 50, 51, 52, 53, 54, 55, 56, 57};
     //    private char[] charArray = {'m', 'o'};
     private int resolution;
     private SubImgCharMatcher charMatcher;
@@ -72,7 +76,7 @@ public class Shell {
             if (tokens.length == 0) continue;
             String command = tokens[0];
             if (tokens.length == 1) {
-                subCommand = "";
+                subCommand = EMPTY;
             } else {
                 subCommand = tokens[1];
             }
@@ -86,11 +90,11 @@ public class Shell {
                 }
             }
             if(command.equals(ADD)){
-                addChars(tokens);
+                addChars(subCommand);
                 continue;
             }
             if(command.equals(REMOVE)){
-                removeChars(tokens);
+                removeChars(subCommand);
                 continue;
             }
             if(command.equals(VIEW)){
@@ -98,11 +102,15 @@ public class Shell {
                 continue;
             }
             if(command.equals(SELECT_OUTPUT)){
-                displayForUser(tokens);
+                displayForUser(subCommand);
                 continue;
             }
             if(command.equals(ROUND)){
                 roundCommand(subCommand);
+                continue;
+            }
+            if(command.equals(RUN_ALGO)){
+                runAlgorithm();
                 continue;
             }
         }
@@ -182,18 +190,22 @@ public class Shell {
 
     /**
      * Method that is employed when the command "add" was given
-     * @param commands An array of strings that make up the original user command
+     * @param command A strings that make up the sub user command
      * @author Ishay Shaul
      * @author Maoz Bar Shimon
      */
-    private void addChars(String[] commands){
-        if(commands[1].length() == 1){
-            char c = commands[1].charAt(0);
+    private void addChars(String command){
+        if(command.equals(EMPTY)){
+            System.out.println(ADD_INCORRECT);
+            return;
+        }
+        if(command.length() == 1){
+            char c = command.charAt(0);
             charMatcher.addChar(c);
             return;
         }
         // all
-        if(commands[0].equals(ALL)){
+        if(command.equals(ALL)){
             for(int i = LOW_INDEX; i <= HIGH_INDEX; i++){
                 char c = (char) i;
                 charMatcher.addChar(c);
@@ -201,8 +213,8 @@ public class Shell {
             return;
         }
         // range
-        if(commands[1].length() == 3){
-            String[] parts= commands[1].split(RANGE_SPLITTER);
+        if(command.length() == 3){
+            String[] parts= command.split(RANGE_SPLITTER);
             if(parts.length == 2){
                 int first = (int) parts[0].charAt(0);
                 int second = (int) parts[1].charAt(0);
@@ -213,7 +225,7 @@ public class Shell {
             }
         }
         // space
-        if(commands[0].equals(SPACE_ARG)){
+        if(command.equals(SPACE_ARG)){
             char c = SPACE.charAt(0);
             charMatcher.addChar(c);
         }
@@ -247,18 +259,22 @@ public class Shell {
 
     /**
      * method that takes care of the "remove" command from the user
-     * @param commands Array of string which make up the command given by the user.
+     * @param command Array of string which make up the command given by the user.
      * @author Ishay Shaul
      * @author Maoz Bar Shimon
      */
-    public void removeChars(String[] commands){
-        if(commands[1].length() == 1){
-            char c = commands[1].charAt(0);
+    private void removeChars(String command){
+        if(command.equals(EMPTY)){
+            System.out.println(REMOVE_INCORRECT);
+            return;
+        }
+        if(command.length() == 1){
+            char c = command.charAt(0);
             charMatcher.removeChar(c);
             return;
         }
         // all
-        if(commands[0].equals(ALL)){
+        if(command.equals(ALL)){
             for(int i = LOW_INDEX; i <= HIGH_INDEX; i++){
                 char c = (char) i;
                 charMatcher.removeChar(c);
@@ -266,8 +282,8 @@ public class Shell {
             return;
         }
         // range
-        if(commands[1].length() == 3){
-            String[] parts= commands[1].split(RANGE_SPLITTER);
+        if(command.length() == 3){
+            String[] parts= command.split(RANGE_SPLITTER);
             if(parts.length == 2){
                 int first = (int) parts[0].charAt(0);
                 int second = (int) parts[1].charAt(0);
@@ -278,7 +294,7 @@ public class Shell {
             }
         }
         // space
-        if(commands[0].equals(SPACE_ARG)){
+        if(command.equals(SPACE_ARG)){
             char c = SPACE.charAt(0);
             charMatcher.removeChar(c);
         }
@@ -297,7 +313,7 @@ public class Shell {
      * @author Ishay Shaul
      * @author Maoz Bar Shimon
      */
-    public void setRemove(int n, int m){
+    private void setRemove(int n, int m){
         if(n <= m){
             for(int i = n; i <= m; i++){
                 char c = (char) i;
@@ -322,7 +338,7 @@ public class Shell {
      * @author Ishay Shaul
      * @author Maoz Bar Shimon
      */
-    public void displayChars(){
+    private void displayChars(){
         TreeMap<Character, Double> charTreeMap = charMatcher.getCharBrightnessMap();
         if(charTreeMap.isEmpty()){
             return;
@@ -344,21 +360,21 @@ public class Shell {
      * If an unsupported output type is given, or if the command is incomplete,
      * an error message is printed.
      *
-     * @param commands an array of strings representing the user command;
+     * @param command an array of strings representing the user command;
      *                 the second element specifies the desired output type
      * @author Ishay Shaul
      * @author Maoz Bar Shimon
      */
-    public void displayForUser(String[] commands){
-        if(commands.length == 1){
+    private void displayForUser(String command){
+        if(command.equals(EMPTY)){
             System.out.println(OUTPUT_ERROR);
             return;
         }
-        if(commands[1].equals(CONSOLE)){
+        if(command.equals(CONSOLE)){
             currentOutput = new ConsoleAsciiOutput();
             return;
         }
-        if(commands[1].equals(HTML)){
+        if(command.equals(HTML)){
             currentOutput = new HtmlAsciiOutput(HTML_FILENAME, HTML_FONT);
             return;
         }
@@ -396,7 +412,16 @@ public class Shell {
         }
     }
 
-
+    private void runAlgorithm(){
+        TreeMap<Character, Double> charTreeMap = charMatcher.getCharBrightnessMap();
+        if(charTreeMap.size() <= MIN_CHARS){
+            System.out.println(MIN_CHARS_ERROR);
+            return;
+        }
+        System.out.println("number of chars: " + charTreeMap.size());
+        char[][] board = asciiArtAlgorithm.run();
+        currentOutput.out(board);
+    }
 
     public static void main (String[] args) throws IOException {
         if (args.length != 1) {
@@ -408,38 +433,6 @@ public class Shell {
         shell.run(shell.imagePath);
 
     }
-
-//        try {
-//            // טען את התמונה (מהקובץ)
-//            Image image = new Image("C:\\Users\\ishay\\JAVA\\ex3\\src\\examples\\board.jpeg");
-//
-//            // הגדר רזולוציה
-//            int resPerRow = 2;
-//
-//            char[] charArr = {'m', 'o'};
-//            SubImgCharMatcher matcher = new SubImgCharMatcher(charArr);
-//
-//            // צור את המעבדz
-//            ImageProcessor processor = new ImageProcessor(); // או השתמש ב-Static אם מתאים
-//
-//            // צור את האלגוריתם
-//            AsciiArtAlgorithm algo = new AsciiArtAlgorithm(image, resPerRow, processor, matcher);
-//
-//            // הרץ את האלגוריתם
-//            char[][] result = algo.run();
-//
-//            // הדפס את הפלט לשם דיבוג
-//            for (char[] row : result) {
-//                for (char c : row) {
-//                    System.out.print(c + " ");
-//                }
-//                System.out.println();
-//            }
-//
-//        } catch (Exception e) {
-//            System.err.println("❌ Error during debug run: " + e.getMessage());
-//            e.printStackTrace();
-//        }
 }
 
 
