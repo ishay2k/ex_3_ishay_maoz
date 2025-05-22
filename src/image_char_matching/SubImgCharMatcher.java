@@ -6,17 +6,36 @@ import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.Map;
 
-
+/**
+ * This class manages a set of characters and maps each one to a normalized brightness
+ * value based on its visual representation in a 16x16 pixel grid
+ * Supports adding and removing characters from the set
+ * @author Ishay Shaul
+ * @author Maoz Bar Shimon
+ * @see ascii_art.AsciiArtAlgorithm
+ */
 public class SubImgCharMatcher {
+    /** to conclude the brightness of the char, we divide it to this number of sub images.*/
     private static final int PIXEL_SIZE = 16;
 
-
+    /** A set of all the characters in play.*/
     private final HashSet<Character> charSet;
+
+    /** Mapping each character to its brightness level.*/
     private TreeMap<Character, Double> charBrightnessMap;
+
+    /** Maximum brightness between current characters .*/
     private double maxBrightness;
+
+    /** minimum brightness between current characters.*/
     private double minBrightness;
 
 
+    /**
+     * Constructs a class whose priority is being in charge of the characters and their
+     * brightness
+     * @param charset An array of chars that the class starts with
+     */
     public SubImgCharMatcher(char[] charset){
         this.charSet = new HashSet<Character>();
         this.charBrightnessMap = new TreeMap<>();
@@ -27,39 +46,38 @@ public class SubImgCharMatcher {
         normalizeBrightness();
     }
 
+    /**
+     * Removing a certain character from the map and hashset
+     * @param c The character being removed
+     */
     public void removeChar(char c){
         if(charBrightnessMap.containsKey(c)){
             charBrightnessMap.remove(c);
+            charSet.remove(c);
             setMaximumAndMinimumBrightness();
             normalizeBrightness();
         }
     }
 
+    /**
+     * Adds a character to the map and set
+     * @param c The character that is being added
+     */
     public void addChar(char c){
         this.charSet.add(c);
         double cBrightness = calculateBrightness(c);
         charBrightnessMap.put(c, cBrightness);
-//        setMaximumAndMinimumBrightness();
-//        normalizeBrightness();
+        charSet.add(c);
     }
 
 
     /**
-     * This method receives a certain brightness and returns the character with the closest brightness
-     * @param brightness The parameter which will be used to measure which character is closest
-     * @return           The character with the closest brightness to the input
+     * We receive a brightness and search for the character with the brightness closest
+     * to the input brightness, using the roundingMode formula.
+     * @param brightness   The brightness which is sought after
+     * @param roundingMode The formula deciding which is closest
+     * @return             The character with the closest brightness
      */
-//    public char getCharByImageBrightness(double brightness, RoundingMode roundingMode){
-//        double diff = Math.abs(brightness - charBrightnessMap.firstEntry().getValue());
-//        char curr = charBrightnessMap.firstKey();
-//        for(Map.Entry<Character, Double> entry : charBrightnessMap.entrySet()){
-//            if(diff > Math.abs(entry.getValue() - brightness)){
-//                diff = Math.abs(entry.getValue() - brightness);
-//                curr = entry.getKey();
-//            }
-//        }
-//        return curr;
-//    }
     public char getCharByImageBrightness(double brightness, RoundingMode roundingMode){
         char selectedChar = 0;
         double bestDiff = Double.MAX_VALUE;
@@ -107,9 +125,10 @@ public class SubImgCharMatcher {
 
     /**
      * calculates brightness for a specific character. we turn the character into a 16x16
-     * matrix, where some are false, and some negative. brightness = sum true / (16*16)
-     * @param c the character for which we are calculating the brightness
+     * matrix, where some are false, and some true. brightness = sum true / (16*16)
+     * @param c the character whose brightness is being calculated
      * @return  the brightness of character c
+     *
      */
     public double calculateBrightness(Character c){
         boolean[][] miniMatrix = CharConverter.convertToBoolArray(c);
@@ -125,7 +144,7 @@ public class SubImgCharMatcher {
     }
 
     /**
-     * sets the maximum and minimum brightness.
+     * Concludes the maximum and minimum brightness and sets them.
      * This method will come before the normalization
      * @author Ishay Shaul
      * @author Maoz Bar Shimon
@@ -146,8 +165,12 @@ public class SubImgCharMatcher {
     }
 
     /**
-     * normalizes every character's brightness.
+     * Normalizes the brightness for each character.
+     *
+     * Formula used:
      * normalize = (current brightness - min brightness) / (max brightness - min brightness)
+     * @author Ishay Shaul
+     * @author Maoz Bar Shimon
      */
     public void normalizeBrightness(){
         double denominator = maxBrightness - minBrightness;
@@ -158,6 +181,12 @@ public class SubImgCharMatcher {
         }
     }
 
+    /**
+     * getter for the map
+     * @return the map of characters and their brightness level
+     * @author Ishay Shaul
+     * @author Maoz Bar Shimon
+     */
     public TreeMap<Character, Double> getCharBrightnessMap(){
         return charBrightnessMap;
     }
