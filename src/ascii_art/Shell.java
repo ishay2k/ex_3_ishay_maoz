@@ -68,6 +68,13 @@ public class Shell {
     /** The splitter that is used when the user wants to add/remove a range of chars .*/
     private static final String RANGE_SPLITTER = "-";
 
+    /** at each iteration, this arrow will "point" to the user, so they know to enter
+     * command.*/
+    private static final String ARROW_TO_USER = ">>> ";
+
+    /** after the user command, this arrow will show that it is the program's turn.*/
+    private static final String FROM_USER = "<<< ";
+
     /** Sub command of output. Meaning that the final image be printed to the console.*/
     private static final String CONSOLE = "console";
 
@@ -99,12 +106,64 @@ public class Shell {
     /** empty string that will be in use if the user did not give a sub command.*/
     private static final String EMPTY = "";
 
+    /** sub command to increase resolution.*/
+    private static final String UP = "up";
+
+    /** sub command to decrease resolution.*/
+    private static final String DOWN  = "down";
+
+    private static final int RES_MULTIPLIER = 2;
+
     /** minimum number of characters that can be in use.*/
     private static final int MIN_CHARS = 2;
+
+    /** for the remove or add range, there must be no more than three chars.*/
+    private static final int ADD_REM_RANGE = 3;
+
+    /** after removing "-", there can be only two chars for the range.*/
+    private static final int SIZE_RANGE = 2;
 
     /** Error message that is sent if the user commanded asciiArt and the number of chars
      * is no more than two.*/
     private static final String MIN_CHARS_ERROR = "Did not execute. Charset is too small.";
+
+    /** the program will split the command to words for further evaluation.*/
+    private static final String SPLITTER = "\\s+";
+
+    /** Zero in ascii value.*/
+    private static final int ZERO_REPRESENT = 48;
+
+    /** One in ascii value.*/
+    private static final int ONE_REPRESENT = 49;
+
+    /** Two in ascii value.*/
+    private static final int TWO_REPRESENT = 50;
+
+    /** Three in ascii value.*/
+    private static final int THREE_REPRESENT = 51;
+
+    /** Four in ascii value.*/
+    private static final int FOUR_REPRESENT = 52;
+
+    /** Five in ascii value.*/
+    private static final int FIVE_REPRESENT = 53;
+
+    /** Six in ascii value.*/
+    private static final int SIX_REPRESENT = 54;
+
+    /** Seven in ascii value.*/
+    private static final int SEVEN_REPRESENT = 55;
+
+    /** Eight in ascii value.*/
+    private static final int EIGHT_REPRESENT = 56;
+
+    /** Nine in ascii value.*/
+    private static final int NINE_REPRESENT = 57;
+
+    /** command for absolute rounding.*/
+    private static final String ABS = "abs";
+
+    private static final String MAIN_ERROR = "Usage: java Shell <image path>";
 
     /** The path to the image we are using.*/
     private final String imagePath;
@@ -119,7 +178,9 @@ public class Shell {
     private AsciiArtAlgorithm asciiArtAlgorithm;
 
     /** default characters in ascii value (the numbers represent 0-9).*/
-    private char[] charArray = {48, 49, 50, 51, 52, 53, 54, 55, 56, 57};
+    private char[] charArray = {ZERO_REPRESENT, ONE_REPRESENT, TWO_REPRESENT,
+    THREE_REPRESENT, FOUR_REPRESENT, FIVE_REPRESENT, SIX_REPRESENT, SEVEN_REPRESENT,
+    EIGHT_REPRESENT, NINE_REPRESENT};
     //    private char[] charArray = {'m', 'o'};
 
     /** The current resolution of the image.*/
@@ -165,9 +226,9 @@ public class Shell {
         String subCommand;
 //        char[][] result = asciiArtAlgorithm.run();
         while (true) {
-            System.out.print(">>> ");
+            System.out.print(ARROW_TO_USER);
             String input = KeyboardInput.readLine();
-            String[] tokens = input.trim().split("\\s+"); // seperate to words
+            String[] tokens = input.trim().split(SPLITTER); // seperate to words
             if (tokens.length == 0) continue;
             String command = tokens[0];
             if (tokens.length == 1) {
@@ -235,17 +296,17 @@ public class Shell {
     private boolean setResolution(String subCommand) {
         int newRes;
         switch (subCommand) {
-            case "":
+            case EMPTY:
                 break;
-            case "up":
-                newRes = resolution * 2;
+            case UP:
+                newRes = resolution * RES_MULTIPLIER;
                 if(!checkBoundries(newRes)) return false;
-                resolution *= 2;
+                resolution *= RES_MULTIPLIER;
                 break;
-            case "down":
-                newRes = resolution / 2;
+            case DOWN:
+                newRes = resolution / RES_MULTIPLIER;
                 if(!checkBoundries(newRes)) return false;
-                resolution /= 2;
+                resolution /= RES_MULTIPLIER;
                 break;
             default:
                 System.out.println(RES_ERR_FORMAT);
@@ -308,9 +369,9 @@ public class Shell {
             return;
         }
         // range
-        if(command.length() == 3){
+        if(command.length() == ADD_REM_RANGE){
             String[] parts= command.split(RANGE_SPLITTER);
-            if(parts.length == 2){
+            if(parts.length == SIZE_RANGE){
                 int first = (int) parts[0].charAt(0);
                 int second = (int) parts[1].charAt(0);
                 setAdds(first, second);
@@ -377,9 +438,9 @@ public class Shell {
             return;
         }
         // range
-        if(command.length() == 3){
+        if(command.length() == ADD_REM_RANGE){
             String[] parts= command.split(RANGE_SPLITTER);
-            if(parts.length == 2){
+            if(parts.length == SIZE_RANGE){
                 int first = (int) parts[0].charAt(0);
                 int second = (int) parts[1].charAt(0);
                 setRemove(first, second);
@@ -493,13 +554,13 @@ public class Shell {
      */
     private void roundCommand(String subCommand){
         switch (subCommand){
-            case "up":
+            case UP:
                 roundingMode = RoundingMode.UP;
                 break;
-            case "down":
+            case DOWN:
                 roundingMode = RoundingMode.DOWN;
                 break;
-            case "abs":
+            case ABS:
                 roundingMode = RoundingMode.ABS;
                 break;
             default:
@@ -526,7 +587,7 @@ public class Shell {
 
     public static void main (String[] args) throws IOException {
         if (args.length != 1) {
-            System.out.println("Usage: java Shell <image path>");
+            System.out.println(MAIN_ERROR);
             return;
         }
 
