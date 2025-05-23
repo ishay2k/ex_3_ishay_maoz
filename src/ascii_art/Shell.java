@@ -3,11 +3,15 @@ package ascii_art;
 import ascii_output.AsciiOutput;
 import ascii_output.ConsoleAsciiOutput;
 import ascii_output.HtmlAsciiOutput;
+import exceptions.OutOfBoundsException;
+import exceptions.TooFewCharactersException;
 import image.Image;
 import image.ImageProcessor;
 import image_char_matching.SubImgCharMatcher;
 import java.io.IOException;
 import java.util.TreeMap;
+import exceptions.InvalidFormatException;
+
 
 
 import static java.lang.Math.max;
@@ -236,38 +240,41 @@ public class Shell {
             } else {
                 subCommand = tokens[1];
             }
-
-            if (command.equals(EXIT)){
-                break;
-            }
-            if(command.equals(CHANGE_RES)){
-                if(!setResolution(subCommand)){
+            try {
+                if (command.equals(EXIT)) {
+                    break;
+                }
+                if (command.equals(CHANGE_RES)) {
+                    if (!setResolution(subCommand)) {
+                        continue;
+                    }
+                }
+                if (command.equals(ADD)) {
+                    addChars(subCommand);
                     continue;
                 }
-            }
-            if(command.equals(ADD)){
-                addChars(subCommand);
-                continue;
-            }
-            if(command.equals(REMOVE)){
-                removeChars(subCommand);
-                continue;
-            }
-            if(command.equals(VIEW)){
-                displayChars();
-                continue;
-            }
-            if(command.equals(SELECT_OUTPUT)){
-                displayForUser(subCommand);
-                continue;
-            }
-            if(command.equals(ROUND)){
-                roundCommand(subCommand);
-                continue;
-            }
-            if(command.equals(RUN_ALGO)){
-                runAlgorithm();
-                continue;
+                if (command.equals(REMOVE)) {
+                    removeChars(subCommand);
+                    continue;
+                }
+                if (command.equals(VIEW)) {
+                    displayChars();
+                    continue;
+                }
+                if (command.equals(SELECT_OUTPUT)) {
+                    displayForUser(subCommand);
+                    continue;
+                }
+                if (command.equals(ROUND)) {
+                    roundCommand(subCommand);
+                    continue;
+                }
+                if (command.equals(RUN_ALGO)) {
+                    runAlgorithm();
+                    continue;
+                }
+            } catch (InvalidFormatException | OutOfBoundsException | TooFewCharactersException e){
+                System.out.println(FROM_USER + e.getMessage());
             }
         }
     }
@@ -293,7 +300,7 @@ public class Shell {
      * @param subCommand a command string indicating how to adjust the resolution
      * @return true if the resolution was updated or left unchanged; false if an error occurred
      */
-    private boolean setResolution(String subCommand) {
+    private boolean setResolution(String subCommand) throws InvalidFormatException, OutOfBoundsException{
         int newRes;
         switch (subCommand) {
             case EMPTY:
@@ -309,8 +316,7 @@ public class Shell {
                 resolution /= RES_MULTIPLIER;
                 break;
             default:
-                System.out.println(RES_ERR_FORMAT);
-                return false;
+                throw new InvalidFormatException(RES_ERR_FORMAT);
         }
         System.out.println(RESOLUTION_SET_MESSAGE + resolution);
         return true;
@@ -333,13 +339,12 @@ public class Shell {
      * @param newRes the proposed resolution (number of characters per row)
      * @return true if the resolution is within the boundaries; false otherwise
      */
-    private boolean checkBoundries(int newRes) {
+    private boolean checkBoundries(int newRes) throws OutOfBoundsException {
         int imgHeight = image.getHeight();
         int imgWidth = image.getWidth();
         int minCharsInRow = max(1, imgWidth / imgHeight);
         if (newRes > imgWidth || minCharsInRow > newRes) {
-            System.out.println(BOUNDRIES_ERR_MESSAGE);
-            return false;
+            throw new OutOfBoundsException(BOUNDRIES_ERR_MESSAGE);
         }
         return true;
     }
@@ -350,10 +355,9 @@ public class Shell {
      * @author Ishay Shaul
      * @author Maoz Bar Shimon
      */
-    private void addChars(String command){
-        if(command.equals(EMPTY)){
-            System.out.println(ADD_INCORRECT);
-            return;
+    private void addChars(String command) throws InvalidFormatException {
+        if(command.equals(EMPTY)) {
+            throw new InvalidFormatException(ADD_INCORRECT);
         }
         if(command.length() == 1){
             char c = command.charAt(0);
@@ -377,7 +381,7 @@ public class Shell {
                 setAdds(first, second);
             }
             else{
-                System.out.println(ADD_INCORRECT);
+                throw new InvalidFormatException(ADD_INCORRECT);
             }
         }
         // space
@@ -387,7 +391,7 @@ public class Shell {
         }
         // else
         else{
-            System.out.println(ADD_INCORRECT);
+            throw new InvalidFormatException(ADD_INCORRECT);
         }
     }
 
@@ -419,10 +423,9 @@ public class Shell {
      * @author Ishay Shaul
      * @author Maoz Bar Shimon
      */
-    private void removeChars(String command){
+    private void removeChars(String command) throws InvalidFormatException {
         if(command.equals(EMPTY)){
-            System.out.println(REMOVE_INCORRECT);
-            return;
+            throw new InvalidFormatException(REMOVE_INCORRECT);
         }
         if(command.length() == 1){
             char c = command.charAt(0);
@@ -446,7 +449,7 @@ public class Shell {
                 setRemove(first, second);
             }
             else{
-                System.out.println(REMOVE_INCORRECT);
+                throw new InvalidFormatException(REMOVE_INCORRECT);
             }
         }
         // space
@@ -456,7 +459,7 @@ public class Shell {
         }
         // else
         else{
-            System.out.println(REMOVE_INCORRECT);
+            throw new InvalidFormatException(REMOVE_INCORRECT);
         }
     }
 
@@ -521,10 +524,9 @@ public class Shell {
      * @author Ishay Shaul
      * @author Maoz Bar Shimon
      */
-    private void displayForUser(String command){
+    private void displayForUser(String command) throws InvalidFormatException {
         if(command.equals(EMPTY)){
-            System.out.println(OUTPUT_ERROR);
-            return;
+            throw new InvalidFormatException(OUTPUT_ERROR);
         }
         if(command.equals(CONSOLE)){
             currentOutput = new ConsoleAsciiOutput();
@@ -535,7 +537,7 @@ public class Shell {
             return;
         }
         else{
-            System.out.println(OUTPUT_ERROR);
+            throw new InvalidFormatException(OUTPUT_ERROR);
         }
     }
 
@@ -552,7 +554,7 @@ public class Shell {
      *
      * @param subCommand the rounding command as a string (e.g., "up", "down", "abs")
      */
-    private void roundCommand(String subCommand){
+    private void roundCommand(String subCommand) throws InvalidFormatException {
         switch (subCommand){
             case UP:
                 roundingMode = RoundingMode.UP;
@@ -564,7 +566,7 @@ public class Shell {
                 roundingMode = RoundingMode.ABS;
                 break;
             default:
-                System.out.println(ROUND_ERR_MESSAGE);
+                throw new InvalidFormatException(ROUND_ERR_MESSAGE);
         }
     }
 
@@ -577,8 +579,7 @@ public class Shell {
     private void runAlgorithm(){
         TreeMap<Character, Double> charTreeMap = charMatcher.getCharBrightnessMap();
         if(charTreeMap.size() <= MIN_CHARS){
-            System.out.println(MIN_CHARS_ERROR);
-            return;
+            throw new TooFewCharactersException(MIN_CHARS_ERROR);
         }
 //        System.out.println("number of chars: " + charTreeMap.size());
         char[][] board = asciiArtAlgorithm.run();
@@ -591,9 +592,16 @@ public class Shell {
             return;
         }
 
-        Shell shell = new Shell(args[0]);
-        shell.run(shell.imagePath);
+        try {
+            Shell shell = new Shell(args[0]);
+            shell.run(shell.imagePath);
+        } catch (
+                OutOfBoundsException |
+                 TooFewCharactersException |
+                 IOException e) {
+            System.out.println(e.getMessage());
 
+        }
     }
 }
 
