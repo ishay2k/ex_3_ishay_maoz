@@ -12,9 +12,13 @@ import java.awt.*;
  * needed in the ASCII art conversion pipeline.
  *
  */
-
-// check if to it utility class(then static functions) - this is leads chnages in asciiart class
 public class ImageProcessor {
+
+    /** The largest number a component of RGB greyscale can have.*/
+    private static final int MAX_RGB = 255;
+
+    /** Used in nextPowerOfTwo and calculate padSize.*/
+    private static final int TWO_MULT = 2;
 
     /**
      * Pads an image with white pixels so that its width and/or height
@@ -66,7 +70,7 @@ public class ImageProcessor {
     private static int calculatePadSize(int newSize, int oldSize) {
         int sizeToPad;
         if(newSize != oldSize){
-            sizeToPad = (newSize - oldSize) / 2;
+            sizeToPad = (newSize - oldSize) / TWO_MULT;
         } else {
             sizeToPad = 0;
         }
@@ -87,7 +91,7 @@ public class ImageProcessor {
     private static void createWhiteBackground(int newHeight, int newWidth, Color[][] newPixels) {
         for (int i = 0; i < newHeight; i++) {
             for (int j = 0; j < newWidth; j++) {
-                newPixels[i][j] = new Color(255, 255, 255);
+                newPixels[i][j] = new Color(MAX_RGB, MAX_RGB, MAX_RGB);
             }
         }
     }
@@ -137,7 +141,7 @@ public class ImageProcessor {
     private static int nextPowerOfTwo(int n) {
         int power = 1;
         while (power < n) {
-            power *= 2;
+            power *= TWO_MULT;
         }
         return power;
     }
