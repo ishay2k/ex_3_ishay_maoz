@@ -214,8 +214,8 @@ public class Shell {
         this.imageProcessor = new ImageProcessor();
         this.charMatcher = new SubImgCharMatcher(charArray);
         this.resolution = MIN_CHARS;
-        this.asciiArtAlgorithm = new AsciiArtAlgorithm(image, resolution,
-                imageProcessor, charMatcher, roundingMode);
+//        this.asciiArtAlgorithm = new AsciiArtAlgorithm(image, resolution,
+//                imageProcessor, charMatcher, roundingMode);
         currentOutput = new ConsoleAsciiOutput();
     }
 
@@ -379,6 +379,7 @@ public class Shell {
                 int first = (int) parts[0].charAt(0);
                 int second = (int) parts[1].charAt(0);
                 setAdds(first, second);
+                return;
             }
             else{
                 throw new InvalidFormatException(ADD_INCORRECT);
@@ -391,6 +392,7 @@ public class Shell {
         }
         // else
         else{
+//            System.out.println(command.length());
             throw new InvalidFormatException(ADD_INCORRECT);
         }
     }
@@ -447,6 +449,7 @@ public class Shell {
                 int first = (int) parts[0].charAt(0);
                 int second = (int) parts[1].charAt(0);
                 setRemove(first, second);
+                return;
             }
             else{
                 throw new InvalidFormatException(REMOVE_INCORRECT);
@@ -577,6 +580,8 @@ public class Shell {
      * @author Maoz Bar Shimon
      */
     private void runAlgorithm(){
+        this.asciiArtAlgorithm = new AsciiArtAlgorithm(image, resolution,
+                imageProcessor, charMatcher, roundingMode);
         TreeMap<Character, Double> charTreeMap = charMatcher.getCharBrightnessMap();
         if(charTreeMap.size() <= MIN_CHARS){
             throw new TooFewCharactersException(MIN_CHARS_ERROR);
