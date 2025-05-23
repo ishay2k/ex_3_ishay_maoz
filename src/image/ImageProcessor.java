@@ -159,6 +159,11 @@ public class ImageProcessor {
         int sizeOfMatrix = image.getWidth() / resolutionsPerRow;
         int subImagesToTop = image.getHeight() / sizeOfMatrix;
 
+        System.out.println(image.getWidth());
+        System.out.println(image.getHeight());
+        System.out.println(sizeOfMatrix * resolutionsPerRow);
+        System.out.println(subImagesToTop * sizeOfMatrix);
+
         SubImage[][] resolutionImage = new SubImage[subImagesToTop][resolutionsPerRow];
 
         for(int row = 0; row < subImagesToTop; row++){
