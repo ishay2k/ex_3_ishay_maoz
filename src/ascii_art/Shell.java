@@ -101,11 +101,11 @@ public class Shell {
     public static final String BOUNDRIES_ERR_MESSAGE = "Did not change resolution due to exceeding boundaries.";
 
     /** Error that is printed when the command for "res" is incorrect.*/
-    public static final String RES_ERR_FORMAT = "Did not change resolution due to incorrect format.\n";
+    public static final String RES_ERR_FORMAT = "Did not change resolution due to incorrect format.";
 
     /** Information message that is printed for the user to know what the resolution is
      * after the change.*/
-    public static final String RESOLUTION_SET_MESSAGE = "Resolution set to %s.\n";
+    public static final String RESOLUTION_SET_MESSAGE = "Resolution set to ";
 
     /** empty string that will be in use if the user did not give a sub command.*/
     private static final String EMPTY = "";
