@@ -86,7 +86,7 @@ public class Shell {
     private static final String HTML = "html";
 
     /** The html file that the final image will be sent to.*/
-    private static final String HTML_FILENAME = "html.out";
+    private static final String HTML_FILENAME = "out.html";
 
     /** the font of the html file.*/
     private static final String HTML_FONT = "Courier New";
@@ -245,31 +245,38 @@ public class Shell {
                     break;
                 }
                 if (command.equals(CHANGE_RES)) {
+                    System.out.println(FROM_USER);
                     if (!setResolution(subCommand)) {
                         continue;
                     }
                 }
                 if (command.equals(ADD)) {
+                    System.out.println(FROM_USER);
                     addChars(subCommand);
                     continue;
                 }
                 if (command.equals(REMOVE)) {
+                    System.out.println(FROM_USER);
                     removeChars(subCommand);
                     continue;
                 }
                 if (command.equals(VIEW)) {
+                    System.out.println(FROM_USER);
                     displayChars();
                     continue;
                 }
                 if (command.equals(SELECT_OUTPUT)) {
+                    System.out.println(FROM_USER);
                     displayForUser(subCommand);
                     continue;
                 }
                 if (command.equals(ROUND)) {
+                    System.out.println(FROM_USER);
                     roundCommand(subCommand);
                     continue;
                 }
                 if (command.equals(RUN_ALGO)) {
+                    System.out.println(FROM_USER);
                     runAlgorithm();
                     continue;
                 }
