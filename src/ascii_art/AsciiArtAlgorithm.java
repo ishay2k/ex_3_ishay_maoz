@@ -56,7 +56,6 @@ public class AsciiArtAlgorithm {
      */
     public char[][] run(){
         Image paddedImage = imageProcessor.padToPowerOfTwo(image);
-        System.out.println("size padded image:" + paddedImage.getHeight() + " " + paddedImage.getWidth());
         SubImage[][] subImages = imageProcessor.returnSubImages(paddedImage, resolutionsPerRow);
 
         int rows = subImages.length;
