@@ -52,6 +52,8 @@ package "image_char_matching"{
         +getCharByImageBrightness(double, RoundingMode): char
         +normalizeBrightness(): void
     }
+    SubImgCharMatcher --> ascii_art.RoundingMode : uses
+
 }
 
 package "ascii_art"{
@@ -62,8 +64,8 @@ package "ascii_art"{
         +run(): char[][]
     }
 
-    class KeyBoardInput{
-        KeyBoardInput()
+    class KeyboardInput{
+        KeyboardInput()
         +readLine(): String
     }
 
@@ -74,11 +76,13 @@ package "ascii_art"{
     }
 
     Shell --> AsciiArtAlgorithm: uses
-    Shell --> KeyBoardInput: uses
+    Shell --> KeyboardInput: uses
     Shell --> Image: creates
     Shell --> ImageProcessor: creates
     Shell --> SubImgCharMatcher: creates
     Shell --> AsciiOutput: creates
+    AsciiArtAlgorithm --> RoundingMode : uses
+
 
 }
 

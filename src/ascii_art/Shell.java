@@ -9,7 +9,6 @@ import image.Image;
 import image.ImageProcessor;
 import image_char_matching.SubImgCharMatcher;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.TreeMap;
 import exceptions.InvalidFormatException;

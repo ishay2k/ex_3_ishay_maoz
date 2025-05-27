@@ -4,7 +4,6 @@ import ascii_art.RoundingMode;
 
 import java.util.HashSet;
 import java.util.TreeMap;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -22,11 +21,8 @@ public class SubImgCharMatcher {
     /** A set of all the characters in play.*/
     private final HashSet<Character> charSet;
 
-//    /** Mapping each character to its brightness level.*/
-//    private TreeMap<Character, Double> charBrightnessMap;
-
     /** Mapping each character to its brightness level.*/
-    private TreeMap<Character, Double> charBrightnessMap;
+    private final TreeMap<Character, Double> charBrightnessMap;
 
     /** Maximum brightness between current characters .*/
     private double maxBrightness;
@@ -34,9 +30,8 @@ public class SubImgCharMatcher {
     /** minimum brightness between current characters.*/
     private double minBrightness;
 
-    private final TreeMap<Character, Double> originalBrightnessMap = new TreeMap<>(); //maoz added
+    private final TreeMap<Character, Double> originalBrightnessMap = new TreeMap<>();
 
-//    private final HashMap<Character, Double> originalBrightnessMap = new HashMap<>();
 
     /**
      * Constructs a class whose priority is being in charge of the characters and their
@@ -59,13 +54,6 @@ public class SubImgCharMatcher {
      * @param c The character being removed
      */
     public void removeChar(char c){
-//        if (originalBrightnessMap.containsKey(c)) {
-//            originalBrightnessMap.remove(c);
-//            charSet.remove(c);
-//            setMaximumAndMinimumBrightness();
-//            normalizeBrightness();
-//        }
-
         if (charSet.contains(c)) {
             originalBrightnessMap.remove(c);
             charBrightnessMap.remove(c);
@@ -103,10 +91,7 @@ public class SubImgCharMatcher {
         double bestDiff = Double.MAX_VALUE;
         boolean found = false;
 
-//        for (Map.Entry<Character, Double> entry : charBrightnessMap.entrySet()) {
         for(Map.Entry<Character, Double> entry : charBrightnessMap.entrySet()){
-//            double charBrightness = entry.getValue();
-//            char c = entry.getKey();
             double charBrightness = entry.getValue();
             char c = entry.getKey();
 
