@@ -1,0 +1,98 @@
+@startuml
+
+package "ascii_output"{
+    interface AsciiOutput{
+        +out(char[][]): void
+    }
+
+    class ConsoleAsciiOutput{
+        +out(char[][]): void
+    }
+
+    class HtmlAsciiOutput{
+        +out(char[][]): void
+    }
+
+    ConsoleAsciiOutput --|> AsciiOutput
+    HtmlAsciiOutput --|> AsciiOutput
+}
+
+package "image"{
+    class Image{
+        Image(String)
+        Image(Color[][], int, int)
+        +saveImage(String): void
+    }
+
+    class ImageProcessor{
+        +padToPowerOfTwo(Image): Image
+        +returnSubImages(Image, int): SubImage[][]
+        +fillSubImage(int, int, int, Image): SubImage
+    }
+
+    class SubImage{
+        SubImage(Color[][])
+        +calculateBrightness(): double
+    }
+
+    ImageProcessor --> Image : takes & returns
+    ImageProcessor --> SubImage : returns
+}
+
+package "image_char_matching"{
+    class CharConverter{
+        +converToBoolArray(char): boolean
+        -getBufferedImage(char, String, int): BufferedImage
+    }
+
+    class SubImgCharMatcher{
+        SubImgCharMatcher(char[])
+        +addChar(char): void
+        +removeChar(char): void
+        +getCharByImageBrightness(double, RoundingMode): char
+        +normalizeBrightness(): void
+    }
+}
+
+package "exceptions"{
+    class InvalidFormatException
+    class OutOfBoundsException
+    class TooFewCharactersException
+
+    InvalidFormatException --|> Exception
+    OutOfBoundsException --|> Exception
+    TooFewCharactersException --|> Exception
+}
+
+package "ascii_art"{
+    enum RoundingMode
+    class AsciiArtAlgorithm{
+        AsciiArtAlgorithm(Image, int, ImageProcessor,
+        SubImgCharMatcher, RoundingMode)
+        +run(): char[][]
+    }
+
+    class KeyBoardInput{
+        KeyBoardInput()
+        +readLine(): String
+    }
+
+    class Shell{
+        Shell(String)
+        +run(String): void
+        +main(String[])
+    }
+
+    Shell --> AsciiArtAlgorithm: uses
+    Shell --> KeyBoardInput: uses
+    Shell --> Image: creates
+    Shell --> ImageProcessor: creates
+    Shell --> SubImgCharMatcher: creates
+    Shell --> AsciiOutput: creates
+    Shell --> InvalidFormatException : <<throws>>
+    Shell --> TooFewCharactersException : <<throws>>
+    Shell --> OutOfBoundsException : <<throws>>
+
+}
+
+@enduml
