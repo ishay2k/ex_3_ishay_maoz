@@ -96,17 +96,17 @@ public class Shell {
     private static final String OUTPUT_ERROR = "Did not change output method due to incorrect format.";
 
     /** Error that is printed when an incorrect sub command is given to round.*/
-    public static final String ROUND_ERR_MESSAGE = "Did not change rounding method due to incorrect format.";
+    private static final String ROUND_ERR_MESSAGE = "Did not change rounding method due to incorrect format.";
 
     /** Error that is printed when the resolution is out of bounds.*/
-    public static final String BOUNDRIES_ERR_MESSAGE = "Did not change resolution due to exceeding boundaries.";
+    private static final String BOUNDRIES_ERR_MESSAGE = "Did not change resolution due to exceeding boundaries.";
 
     /** Error that is printed when the command for "res" is incorrect.*/
-    public static final String RES_ERR_FORMAT = "Did not change resolution due to incorrect format.";
+    private static final String RES_ERR_FORMAT = "Did not change resolution due to incorrect format.";
 
     /** Information message that is printed for the user to know what the resolution is
      * after the change.*/
-    public static final String RESOLUTION_SET_MESSAGE = "Resolution set to ";
+    private static final String RESOLUTION_SET_MESSAGE = "Resolution set to ";
 
     /** empty string that will be in use if the user did not give a sub command.*/
     private static final String EMPTY = "";
@@ -176,7 +176,7 @@ public class Shell {
     /**
      * Default error message printed when an unrecognized command is entered by the user.
      */
-    public static final String DEFAULT_ERR_MESSAGE = "Did not execute due to incorrect command.";
+    private static final String DEFAULT_ERR_MESSAGE = "Did not execute due to incorrect command.";
 
     /** The path to the image we are using.*/
     private final String imagePath;
