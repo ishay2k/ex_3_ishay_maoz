@@ -204,7 +204,7 @@ public class Shell {
     /**
      * Constructs a new Shell object responsible for taking care of the ascii art
      * generation.
-     * @param imagePath    A path to the image that we wish to portray
+     * @param imagePath    A path to the image that will be portrayed
      * @throws IOException If the image cannot be read
      */
     public Shell(String imagePath) throws IOException {
@@ -214,8 +214,6 @@ public class Shell {
         this.imageProcessor = new ImageProcessor();
         this.charMatcher = new SubImgCharMatcher(charArray);
         this.resolution = MIN_CHARS;
-//        this.asciiArtAlgorithm = new AsciiArtAlgorithm(image, resolution,
-//                imageProcessor, charMatcher, roundingMode);
         currentOutput = new ConsoleAsciiOutput();
     }
 
@@ -228,7 +226,6 @@ public class Shell {
      */
     public void run(String imageName) {
         String subCommand;
-//        char[][] result = asciiArtAlgorithm.run();
         while (true) {
             System.out.print(ARROW_TO_USER);
             String input = KeyboardInput.readLine();
@@ -377,8 +374,6 @@ public class Shell {
                 char c = (char) i;
                 charMatcher.addChar(c);
             }
-//            charMatcher.setMaximumAndMinimumBrightness(); //maoz
-//            charMatcher.normalizeBrightness(); //maoz
             return;
         }
         // range
@@ -401,7 +396,6 @@ public class Shell {
         }
         // else
         else{
-//            System.out.println(command.length());
             throw new InvalidFormatException(ADD_INCORRECT);
         }
     }
@@ -595,7 +589,6 @@ public class Shell {
         if(charTreeMap.size() <= MIN_CHARS){
             throw new TooFewCharactersException(MIN_CHARS_ERROR);
         }
-//        System.out.println("number of chars: " + charTreeMap.size());
         char[][] board = asciiArtAlgorithm.run();
         currentOutput.out(board);
     }
