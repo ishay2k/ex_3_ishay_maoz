@@ -35,7 +35,7 @@ public class AsciiArtAlgorithm {
      * @param charMatcher       Measures brightness, as well as adding and removing chars
      * @param roundingMode      The rounding mode used to select chars based on brightness values.
      */
-    AsciiArtAlgorithm(Image image, int resolutionsPerRow,
+    public AsciiArtAlgorithm(Image image, int resolutionsPerRow,
                       ImageProcessor imageProcessor, SubImgCharMatcher charMatcher, RoundingMode roundingMode) {
         this.image = image;
         this.resolutionsPerRow = resolutionsPerRow;

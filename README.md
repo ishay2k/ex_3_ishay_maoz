@@ -60,12 +60,14 @@ ascii_art:
     TreeMap - used in SubImgCharMatcher, primarily for the purpose of matching
     between characters and their brightness. When looking for certain brightnesses
     we can get O(logn) to find said brightness instead of O(n).
-    HashSet - also used in SubImgCharMatcher as well as in Shell. This is used 
-    when looking for a certain character without looking needing the brightness. 
-    2d-array - 
 
-   HashSet – used to track which characters are active in the set, allowing
-   constant-time add/remove/check operations.
+    HashSet -  also used in SubImgCharMatcher and in the Shell class.
+   It helps us quickly check whether a character is present in the active set.
+   The average time complexity is O(1) for add, remove, and contains, which was important because we
+   use these operations frequently
+   2d-array - 
+
+   
 
 3)
     The Shell class handles invalid user inputs via custom exceptions:
@@ -79,15 +81,16 @@ ascii_art:
     surrounding the command logic, and an error message is printed.
 
 
-4) To support our AsciiArtAlgorithm class and its integration with the shell, we added 
-   two public methods to SubImgCharMatcher:
-   public TreeMap<Character, Double> getCharBrightnessMap()
-   public HashSet<Character> getCharSet()
-   We needed these methods in order to check that the character set has at least two usable characters before 
-   running the algorithm, and to access the active character list for mapping image brightness 
-   to ASCII characters.
-   We made sure to expose only what was necessary, keeping the core responsibility of SubImgCharMatcher 
-   focused on managing character brightness. This change also kept the AsciiArtAlgorithm free of 
-   character-management logic, which made it easier to maintain separation of concerns.
+4) 
+    To support our AsciiArtAlgorithm class and its integration with the shell, we added 
+    two public methods to SubImgCharMatcher:
+    public TreeMap<Character, Double> getCharBrightnessMap()
+    public HashSet<Character> getCharSet()
+    We needed these methods in order to check that the character set has at least two usable characters before 
+    running the algorithm, and to access the active character list for mapping image brightness 
+    to ASCII characters.
+    We made sure to expose only what was necessary, keeping the core responsibility of SubImgCharMatcher 
+    focused on managing character brightness. This change also kept the AsciiArtAlgorithm free of 
+    character-management logic, which made it easier to maintain separation of concerns.
    
    
