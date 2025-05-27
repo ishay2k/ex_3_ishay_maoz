@@ -37,17 +37,6 @@ public class SubImage {
         this.pixels = pixels;
     }
 
-//    public Color[][] getPixels() {
-//        return pixels;
-//    }
-//
-//    public int getWidth() {
-//        return pixels[0].length;
-//    }
-//
-//    public int getHeight() {
-//        return pixels.length;
-//    }
 
     /**
      * Calculates the normalized grayscale brightness of this sub-image.
