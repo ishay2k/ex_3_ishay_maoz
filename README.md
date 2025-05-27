@@ -65,7 +65,18 @@ ascii_art:
    It helps us quickly check whether a character is present in the active set.
    The average time complexity is O(1) for add, remove, and contains, which was important because we
    use these operations frequently
-   2d-array - 
+   
+    2d-array - We used 2D arrays in two main places:
+    boolean[][] — This structure is created for each character in CharConverter. Each character is rendered 
+    as a 16×16 pixel image, where each pixel is marked true or false based on whether it is black or white.
+    Since the matrix size is fixed (16×16), the time and space complexity is O(1) per character.
+    We use this matrix to calculate the character's brightness by counting how many true values it contains.
+    char[][] — This is the final ASCII output returned by AsciiArtAlgorithm. Each cell in the matrix 
+    represents a character that corresponds to the brightness of a section of the image.
+    The size of this array depends on the resolution set by the user. Specifically, if the image is 
+    divided into h rows and w columns of sub-images, then the matrix is h × w.
+    We process each cell once, so the runtime is O(h × w) and the space complexity is also O(h × w). 
+    This structure makes it easy to output the final result either to the console or to an HTML file. 
 
    
 
