@@ -52,12 +52,6 @@ public class SubImgCharMatcher {
      * @param c The character being removed
      */
     public void removeChar(char c){
-//        if(charBrightnessMap.containsKey(c)){
-//            charBrightnessMap.remove(c);
-//            charSet.remove(c);
-//            setMaximumAndMinimumBrightness();
-//            normalizeBrightness();
-//        }
         if (originalBrightnessMap.containsKey(c)) {
             originalBrightnessMap.remove(c);
             charSet.remove(c);
@@ -71,10 +65,6 @@ public class SubImgCharMatcher {
      * @param c The character that is being added
      */
     public void addChar(char c){
-//        this.charSet.add(c);
-//        double cBrightness = calculateBrightness(c);
-//        charBrightnessMap.put(c, cBrightness);
-//        charSet.add(c);
         if (!charSet.contains(c)) {
             charSet.add(c);
             double cBrightness = calculateBrightness(c);
@@ -166,7 +156,6 @@ public class SubImgCharMatcher {
     public void setMaximumAndMinimumBrightness(){
         double max = 0;
         double min = 1;
-//        for(Double brightness: charBrightnessMap.values()){
         for(Double brightness: originalBrightnessMap.values()){ //maoz
 
                 if(brightness > max){
@@ -189,12 +178,6 @@ public class SubImgCharMatcher {
      * @author Maoz Bar Shimon
      */
     public void normalizeBrightness(){
-//        double denominator = maxBrightness - minBrightness;
-//        for(Map.Entry<Character, Double> entry : charBrightnessMap.entrySet()){
-//            double charBrightness = entry.getValue();
-//            double normalized = (charBrightness - minBrightness) / denominator;
-//            entry.setValue(normalized);
-//        }
         charBrightnessMap.clear();
         double denominator = maxBrightness - minBrightness;
 
