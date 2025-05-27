@@ -61,6 +61,8 @@ public class SubImgCharMatcher {
         if (originalBrightnessMap.containsKey(c)) {
             originalBrightnessMap.remove(c);
             charSet.remove(c);
+            setMaximumAndMinimumBrightness();
+            normalizeBrightness();
         }
     }
 
@@ -77,6 +79,8 @@ public class SubImgCharMatcher {
             charSet.add(c);
             double cBrightness = calculateBrightness(c);
             originalBrightnessMap.put(c, cBrightness);
+            setMaximumAndMinimumBrightness();
+            normalizeBrightness();
         }
     }
 

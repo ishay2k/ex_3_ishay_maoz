@@ -377,8 +377,8 @@ public class Shell {
                 char c = (char) i;
                 charMatcher.addChar(c);
             }
-            charMatcher.setMaximumAndMinimumBrightness(); //maoz
-            charMatcher.normalizeBrightness(); //maoz
+//            charMatcher.setMaximumAndMinimumBrightness(); //maoz
+//            charMatcher.normalizeBrightness(); //maoz
             return;
         }
         // range
