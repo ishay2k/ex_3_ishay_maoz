@@ -4,6 +4,7 @@ import ascii_art.RoundingMode;
 
 import java.util.HashSet;
 import java.util.TreeMap;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -21,6 +22,9 @@ public class SubImgCharMatcher {
     /** A set of all the characters in play.*/
     private final HashSet<Character> charSet;
 
+//    /** Mapping each character to its brightness level.*/
+//    private TreeMap<Character, Double> charBrightnessMap;
+
     /** Mapping each character to its brightness level.*/
     private TreeMap<Character, Double> charBrightnessMap;
 
@@ -32,6 +36,8 @@ public class SubImgCharMatcher {
 
     private final TreeMap<Character, Double> originalBrightnessMap = new TreeMap<>(); //maoz added
 
+//    private final HashMap<Character, Double> originalBrightnessMap = new HashMap<>();
+
     /**
      * Constructs a class whose priority is being in charge of the characters and their
      * brightness
@@ -40,6 +46,7 @@ public class SubImgCharMatcher {
     public SubImgCharMatcher(char[] charset){
         this.charSet = new HashSet<Character>();
         this.charBrightnessMap = new TreeMap<>();
+//        this.charBrightnessMap = new HashMap<>();
         for(char c : charset){
             addChar(c);
         }
@@ -52,8 +59,16 @@ public class SubImgCharMatcher {
      * @param c The character being removed
      */
     public void removeChar(char c){
-        if (originalBrightnessMap.containsKey(c)) {
+//        if (originalBrightnessMap.containsKey(c)) {
+//            originalBrightnessMap.remove(c);
+//            charSet.remove(c);
+//            setMaximumAndMinimumBrightness();
+//            normalizeBrightness();
+//        }
+
+        if (charSet.contains(c)) {
             originalBrightnessMap.remove(c);
+            charBrightnessMap.remove(c);
             charSet.remove(c);
             setMaximumAndMinimumBrightness();
             normalizeBrightness();
@@ -69,6 +84,7 @@ public class SubImgCharMatcher {
             charSet.add(c);
             double cBrightness = calculateBrightness(c);
             originalBrightnessMap.put(c, cBrightness);
+            charBrightnessMap.put(c, cBrightness);
             setMaximumAndMinimumBrightness();
             normalizeBrightness();
         }
@@ -87,7 +103,10 @@ public class SubImgCharMatcher {
         double bestDiff = Double.MAX_VALUE;
         boolean found = false;
 
-        for (Map.Entry<Character, Double> entry : charBrightnessMap.entrySet()) {
+//        for (Map.Entry<Character, Double> entry : charBrightnessMap.entrySet()) {
+        for(Map.Entry<Character, Double> entry : charBrightnessMap.entrySet()){
+//            double charBrightness = entry.getValue();
+//            char c = entry.getKey();
             double charBrightness = entry.getValue();
             char c = entry.getKey();
 
@@ -183,6 +202,7 @@ public class SubImgCharMatcher {
 
         for(Map.Entry<Character, Double> entry : originalBrightnessMap.entrySet()){
             double normalized = (entry.getValue() - minBrightness) / denominator;
+//            charBrightnessMap.put(entry.getKey(), normalized);
             charBrightnessMap.put(entry.getKey(), normalized);
         }
     }
@@ -195,6 +215,14 @@ public class SubImgCharMatcher {
      */
     public TreeMap<Character, Double> getCharBrightnessMap(){
         return charBrightnessMap;
+    }
+
+    /**
+     * getter for the hash table containing the characters
+     * @return the hash set
+     */
+    public HashSet<Character> getCharSet(){
+        return charSet;
     }
 }
 

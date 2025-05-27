@@ -54,16 +54,6 @@ package "image_char_matching"{
     }
 }
 
-package "exceptions"{
-    class InvalidFormatException
-    class OutOfBoundsException
-    class TooFewCharactersException
-
-    InvalidFormatException --|> Exception
-    OutOfBoundsException --|> Exception
-    TooFewCharactersException --|> Exception
-}
-
 package "ascii_art"{
     enum RoundingMode
     class AsciiArtAlgorithm{
@@ -89,9 +79,6 @@ package "ascii_art"{
     Shell --> ImageProcessor: creates
     Shell --> SubImgCharMatcher: creates
     Shell --> AsciiOutput: creates
-    Shell --> InvalidFormatException : <<throws>>
-    Shell --> TooFewCharactersException : <<throws>>
-    Shell --> OutOfBoundsException : <<throws>>
 
 }
 

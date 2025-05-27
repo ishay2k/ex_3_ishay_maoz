@@ -9,6 +9,8 @@ import image.Image;
 import image.ImageProcessor;
 import image_char_matching.SubImgCharMatcher;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.TreeMap;
 import exceptions.InvalidFormatException;
 
@@ -504,14 +506,23 @@ public class Shell {
      * @author Maoz Bar Shimon
      */
     private void displayChars(){
-        TreeMap<Character, Double> charTreeMap = charMatcher.getCharBrightnessMap();
-        if(charTreeMap.isEmpty()){
+        HashSet<Character> charSet = charMatcher.getCharSet();
+        if(charSet.isEmpty()){
             return;
         }
-        for(Character c: charTreeMap.keySet()){
+        for(Character c: charSet){
             System.out.println(c + SPACE);
         }
         System.out.println();
+//        TreeMap<Double, Character> charTreeMap = charMatcher.getCharBrightnessMap();
+//       HashMap<Character, Double> charTreeMap = charMatcher.getCharBrightnessMap();
+//        if(charTreeMap.isEmpty()){
+//            return;
+//        }
+//        for(Character c: charTreeMap.keySet()){
+//            System.out.println(c + SPACE);
+//        }
+//        System.out.println();
     }
 
     /**
@@ -586,6 +597,7 @@ public class Shell {
         this.asciiArtAlgorithm = new AsciiArtAlgorithm(image, resolution,
                 imageProcessor, charMatcher, roundingMode);
         TreeMap<Character, Double> charTreeMap = charMatcher.getCharBrightnessMap();
+//        HashMap<Character, Double> charTreeMap = charMatcher.getCharBrightnessMap();
         if(charTreeMap.size() <= MIN_CHARS){
             throw new TooFewCharactersException(MIN_CHARS_ERROR);
         }
