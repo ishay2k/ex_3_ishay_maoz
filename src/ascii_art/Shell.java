@@ -168,7 +168,15 @@ public class Shell {
     /** command for absolute rounding.*/
     private static final String ABS = "abs";
 
+    /**
+     * Error message displayed when the program is not run with exactly one argument (image path).
+     */
     private static final String MAIN_ERROR = "Usage: java Shell <image path>";
+
+    /**
+     * Default error message printed when an unrecognized command is entered by the user.
+     */
+    public static final String DEFAULT_ERR_MESSAGE = "Did not execute due to incorrect command.";
 
     /** The path to the image we are using.*/
     private final String imagePath;
@@ -276,6 +284,7 @@ public class Shell {
                     runAlgorithm();
                     continue;
                 }
+                System.out.println(FROM_USER + DEFAULT_ERR_MESSAGE);
             } catch (InvalidFormatException | OutOfBoundsException | TooFewCharactersException e){
                 System.out.println(FROM_USER + e.getMessage());
             }

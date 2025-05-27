@@ -53,6 +53,9 @@ ascii_art:
     decides otherwise. The Shell classes is the one that brings all other
     classes together.
 
+    RoundingMode – defines the available rounding strategies
+    (UP, DOWN, ABS) for brightness matching.
+
 2)
     TreeMap - used in SubImgCharMatcher, primarily for the purpose of matching
     between characters and their brightness. When looking for certain brightnesses
@@ -60,3 +63,31 @@ ascii_art:
     HashSet - also used in SubImgCharMatcher as well as in Shell. This is used 
     when looking for a certain character without looking needing the brightness. 
     2d-array - 
+
+   HashSet – used to track which characters are active in the set, allowing
+   constant-time add/remove/check operations.
+
+3)
+    The Shell class handles invalid user inputs via custom exceptions:
+    - InvalidFormatException: thrown when the user enters a malformed
+      sub-command (e.g., invalid range format).
+    - TooFewCharactersException: thrown when there aren’t enough characters
+      to generate ASCII art.
+    - OutOfBoundsException: thrown when resolution exceeds allowed boundaries.
+    
+    These are caught in the `Shell.run()` method using a try-catch block
+    surrounding the command logic, and an error message is printed.
+
+
+4) To support our AsciiArtAlgorithm class and its integration with the shell, we added 
+   two public methods to SubImgCharMatcher:
+   public TreeMap<Character, Double> getCharBrightnessMap()
+   public HashSet<Character> getCharSet()
+   We needed these methods in order to check that the character set has at least two usable characters before 
+   running the algorithm, and to access the active character list for mapping image brightness 
+   to ASCII characters.
+   We made sure to expose only what was necessary, keeping the core responsibility of SubImgCharMatcher 
+   focused on managing character brightness. This change also kept the AsciiArtAlgorithm free of 
+   character-management logic, which made it easier to maintain separation of concerns.
+   
+   

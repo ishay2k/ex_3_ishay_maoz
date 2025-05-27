@@ -138,7 +138,7 @@ public class SubImgCharMatcher {
      * @return  the brightness of character c
      *
      */
-    public double calculateBrightness(Character c){
+    private double calculateBrightness(Character c){
         boolean[][] miniMatrix = CharConverter.convertToBoolArray(c);
         int numTrue = 0;
         for(int i = 0; i < miniMatrix.length; i++) {
@@ -157,7 +157,7 @@ public class SubImgCharMatcher {
      * @author Ishay Shaul
      * @author Maoz Bar Shimon
      */
-    public void setMaximumAndMinimumBrightness(){
+    private void setMaximumAndMinimumBrightness(){
         double max = 0;
         double min = 1;
         for(Double brightness: originalBrightnessMap.values()){ //maoz
@@ -181,7 +181,7 @@ public class SubImgCharMatcher {
      * @author Ishay Shaul
      * @author Maoz Bar Shimon
      */
-    public void normalizeBrightness(){
+    private void normalizeBrightness(){
         charBrightnessMap.clear();
         double denominator = maxBrightness - minBrightness;
 
