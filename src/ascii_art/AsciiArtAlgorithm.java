@@ -4,7 +4,6 @@ import image.ImageProcessor;
 import image.SubImage;
 import image_char_matching.SubImgCharMatcher;
 
-import java.util.Set;
 
 /**
  * Class whose purpose is to return a 2d array representing the ascii art

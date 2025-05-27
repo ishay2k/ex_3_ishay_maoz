@@ -21,4 +21,3 @@ public class TooFewCharactersException extends RuntimeException {
     }
 }
 
-package exceptions;

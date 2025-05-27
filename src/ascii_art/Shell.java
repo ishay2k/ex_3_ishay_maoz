@@ -174,10 +174,10 @@ public class Shell {
     private final String imagePath;
 
     /** the object of type Image that we are portraying.*/
-    private Image image;
+    private final Image image;
 
     /** The object ImageProcessor that turned the file path to the Image.*/
-    private ImageProcessor imageProcessor;
+    private final ImageProcessor imageProcessor;
 
     /** The algorithm that will turn our brightness levels to an image.*/
     private AsciiArtAlgorithm asciiArtAlgorithm;
@@ -186,14 +186,13 @@ public class Shell {
     private char[] charArray = {ZERO_REPRESENT, ONE_REPRESENT, TWO_REPRESENT,
     THREE_REPRESENT, FOUR_REPRESENT, FIVE_REPRESENT, SIX_REPRESENT, SEVEN_REPRESENT,
     EIGHT_REPRESENT, NINE_REPRESENT};
-    //    private char[] charArray = {'m', 'o'};
 
     /** The current resolution of the image.*/
     private int resolution;
 
     /** An object that lets us add and remove chars, while also calculating their
      * brightness levels.*/
-    private SubImgCharMatcher charMatcher;
+    private final SubImgCharMatcher charMatcher;
 
     /** current output of the program. Can be console or html*/
     private AsciiOutput currentOutput;
@@ -209,7 +208,6 @@ public class Shell {
      * @throws IOException If the image cannot be read
      */
     public Shell(String imagePath) throws IOException {
-        // check image here for exception
         this.imagePath = imagePath;
         this.image = new Image(imagePath);
         this.imageProcessor = new ImageProcessor();
@@ -369,36 +367,57 @@ public class Shell {
             charMatcher.addChar(c);
             return;
         }
-        // all
-        if(command.equals(ALL)){
-            for(int i = LOW_INDEX; i <= HIGH_INDEX; i++){
-                char c = (char) i;
-                charMatcher.addChar(c);
-            }
-            return;
+        if (checkAddAllCommand(command)) return;
+        if (checkAddRangeCommand(command)) return;
+        // space
+        if(command.equals(SPACE_ARG)){
+            char c = SPACE.charAt(0);
+            charMatcher.addChar(c);
         }
-        // range
+        else{
+            throw new InvalidFormatException(ADD_INCORRECT);
+        }
+    }
+
+    /**
+     * Checks if the given command represents a valid character range (e.g., "a-z").
+     * If valid, adds all characters in the range.
+     *
+     * @param command the input command to check
+     * @return true if it's a valid range and characters were added, false otherwise
+     * @throws InvalidFormatException if the format is incorrect
+     */
+    private boolean checkAddRangeCommand(String command) throws InvalidFormatException {
         if(command.length() == ADD_REM_RANGE){
             String[] parts= command.split(RANGE_SPLITTER);
             if(parts.length == SIZE_RANGE){
                 int first = (int) parts[0].charAt(0);
                 int second = (int) parts[1].charAt(0);
                 setAdds(first, second);
-                return;
+                return true;
             }
             else{
                 throw new InvalidFormatException(ADD_INCORRECT);
             }
         }
-        // space
-        if(command.equals(SPACE_ARG)){
-            char c = SPACE.charAt(0);
-            charMatcher.addChar(c);
+        return false;
+    }
+
+    /**
+     * Checks if the command is "all" and adds all ASCII characters in the allowed range.
+     *
+     * @param command the input command to check
+     * @return true if the command is "all" and characters were added, false otherwise
+     */
+    private boolean checkAddAllCommand(String command) {
+        if(command.equals(ALL)){
+            for(int i = LOW_INDEX; i <= HIGH_INDEX; i++){
+                char c = (char) i;
+                charMatcher.addChar(c);
+            }
+            return true;
         }
-        // else
-        else{
-            throw new InvalidFormatException(ADD_INCORRECT);
-        }
+        return false;
     }
 
     /**
@@ -438,36 +457,57 @@ public class Shell {
             charMatcher.removeChar(c);
             return;
         }
-        // all
-        if(command.equals(ALL)){
-            for(int i = LOW_INDEX; i <= HIGH_INDEX; i++){
-                char c = (char) i;
-                charMatcher.removeChar(c);
-            }
-            return;
+        if (checkRemoveAllCommand(command)) return;
+        if (checkRemoveRangeCommand(command)) return;
+        // space
+        if(command.equals(SPACE_ARG)){
+            char c = SPACE.charAt(0);
+            charMatcher.removeChar(c);
         }
-        // range
+        else{
+            throw new InvalidFormatException(REMOVE_INCORRECT);
+        }
+    }
+
+    /**
+     * Checks if the command represents a valid character range (e.g., "a-z") for removal.
+     * If valid, removes all characters in the range.
+     *
+     * @param command the input command to check
+     * @return true if it's a valid range and characters were removed, false otherwise
+     * @throws InvalidFormatException if the format is incorrect
+     */
+    private boolean checkRemoveRangeCommand(String command) throws InvalidFormatException {
         if(command.length() == ADD_REM_RANGE){
             String[] parts= command.split(RANGE_SPLITTER);
             if(parts.length == SIZE_RANGE){
                 int first = (int) parts[0].charAt(0);
                 int second = (int) parts[1].charAt(0);
                 setRemove(first, second);
-                return;
+                return true;
             }
             else{
                 throw new InvalidFormatException(REMOVE_INCORRECT);
             }
         }
-        // space
-        if(command.equals(SPACE_ARG)){
-            char c = SPACE.charAt(0);
-            charMatcher.removeChar(c);
+        return false;
+    }
+
+    /**
+     * Checks if the command is "all" and removes all characters in the allowed ASCII range.
+     *
+     * @param command the input command to check
+     * @return true if the command is "all" and characters were removed, false otherwise
+     */
+    private boolean checkRemoveAllCommand(String command) {
+        if(command.equals(ALL)){
+            for(int i = LOW_INDEX; i <= HIGH_INDEX; i++){
+                char c = (char) i;
+                charMatcher.removeChar(c);
+            }
+            return true;
         }
-        // else
-        else{
-            throw new InvalidFormatException(REMOVE_INCORRECT);
-        }
+        return false;
     }
 
     /**
@@ -513,15 +553,6 @@ public class Shell {
             System.out.println(c + SPACE);
         }
         System.out.println();
-//        TreeMap<Double, Character> charTreeMap = charMatcher.getCharBrightnessMap();
-//       HashMap<Character, Double> charTreeMap = charMatcher.getCharBrightnessMap();
-//        if(charTreeMap.isEmpty()){
-//            return;
-//        }
-//        for(Character c: charTreeMap.keySet()){
-//            System.out.println(c + SPACE);
-//        }
-//        System.out.println();
     }
 
     /**
@@ -596,7 +627,6 @@ public class Shell {
         this.asciiArtAlgorithm = new AsciiArtAlgorithm(image, resolution,
                 imageProcessor, charMatcher, roundingMode);
         TreeMap<Character, Double> charTreeMap = charMatcher.getCharBrightnessMap();
-//        HashMap<Character, Double> charTreeMap = charMatcher.getCharBrightnessMap();
         if(charTreeMap.size() <= MIN_CHARS){
             throw new TooFewCharactersException(MIN_CHARS_ERROR);
         }
@@ -604,7 +634,16 @@ public class Shell {
         currentOutput.out(board);
     }
 
-    public static void main (String[] args) throws IOException {
+    /**
+     * Entry point of the ASCII Art application.
+     * <p>
+     * Expects a single argument: the path to an image file.
+     * Initializes the {@code Shell} and runs the command loop.
+     * Prints an error message if an exception occurs.
+     *
+     * @param args command-line arguments (expects one: image path)
+     */
+    public static void main (String[] args){
         if (args.length != 1) {
             System.out.println(MAIN_ERROR);
             return;
