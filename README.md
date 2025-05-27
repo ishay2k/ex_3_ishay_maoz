@@ -54,8 +54,9 @@ ascii_art:
     classes together.
 
 2)
-    HashMap - used in SubImgCharMatcher, primarily for the purpose of matching
-    between characters and their brightness. Moreover, in addChar and removeChar
-    we look for the brightness of a character, and in HashMap we could find it in 
-    an expectancy of O(1).
+    TreeMap - used in SubImgCharMatcher, primarily for the purpose of matching
+    between characters and their brightness. When looking for certain brightnesses
+    we can get O(logn) to find said brightness instead of O(n).
+    HashSet - also used in SubImgCharMatcher as well as in Shell. This is used 
+    when looking for a certain character without looking needing the brightness. 
     2d-array - 
