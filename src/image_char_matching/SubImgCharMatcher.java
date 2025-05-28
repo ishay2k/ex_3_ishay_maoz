@@ -41,7 +41,6 @@ public class SubImgCharMatcher {
     public SubImgCharMatcher(char[] charset){
         this.charSet = new HashSet<Character>();
         this.charBrightnessMap = new TreeMap<>();
-//        this.charBrightnessMap = new HashMap<>();
         for(char c : charset){
             addChar(c);
         }
@@ -187,7 +186,6 @@ public class SubImgCharMatcher {
 
         for(Map.Entry<Character, Double> entry : originalBrightnessMap.entrySet()){
             double normalized = (entry.getValue() - minBrightness) / denominator;
-//            charBrightnessMap.put(entry.getKey(), normalized);
             charBrightnessMap.put(entry.getKey(), normalized);
         }
     }

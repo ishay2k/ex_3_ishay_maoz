@@ -249,44 +249,38 @@ public class Shell {
                     break;
                 }
                 if (command.equals(CHANGE_RES)) {
-                    System.out.println(FROM_USER);
                     if (!setResolution(subCommand)) {
                         continue;
                     }
+                    continue;
                 }
                 if (command.equals(ADD)) {
-                    System.out.println(FROM_USER);
                     addChars(subCommand);
                     continue;
                 }
                 if (command.equals(REMOVE)) {
-                    System.out.println(FROM_USER);
                     removeChars(subCommand);
                     continue;
                 }
                 if (command.equals(VIEW)) {
-                    System.out.println(FROM_USER);
                     displayChars();
                     continue;
                 }
                 if (command.equals(SELECT_OUTPUT)) {
-                    System.out.println(FROM_USER);
                     displayForUser(subCommand);
                     continue;
                 }
                 if (command.equals(ROUND)) {
-                    System.out.println(FROM_USER);
                     roundCommand(subCommand);
                     continue;
                 }
                 if (command.equals(RUN_ALGO)) {
-                    System.out.println(FROM_USER);
                     runAlgorithm();
                     continue;
                 }
-                System.out.println(FROM_USER + DEFAULT_ERR_MESSAGE);
+                System.out.println(DEFAULT_ERR_MESSAGE);
             } catch (InvalidFormatException | OutOfBoundsException | TooFewCharactersException e){
-                System.out.println(FROM_USER + e.getMessage());
+                System.out.println(e.getMessage());
             }
         }
     }
